@@ -1,4 +1,4 @@
-
+import tkinter as tk
 
 
 def ouvrir_fichier(file):
@@ -51,8 +51,23 @@ def color_alpha(dico):
 
 
 
+if __name__ == "__main__":
+    rgbtxt = ouvrir_fichier("/etc/X11/rgb.txt")
+    dico = parser_rgb(rgbtxt)
+    tab_couleur = color_alpha(dico)
 
-rgbtxt = ouvrir_fichier("/etc/X11/rgb.txt")
-dico = parser_rgb(rgbtxt)
-print(color_alpha(dico))
+    root = tk.Tk()
+    ftop1 = tk.Toplevel(root)
+
+    var = tk.StringVar()
+    canv = tk.Canvas(ftop1)
+    canv.pack()
+    fram = tk.Frame(ftop1)
+    fram.pack()
+    boutton = {}
+    for mesg in ("ok","oops"):
+        boutton[mesg]=tk.Button(fram,text=mesg)
+        boutton[mesg].pack(side="left")
+        
+    root.mainloop()
 		
