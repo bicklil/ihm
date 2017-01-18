@@ -66,23 +66,45 @@ def color_alpha(dico):
 
 if __name__ == "__main__":
     rgbtxt = ouvrir_fichier("/etc/X11/rgb.txt")
-    dico = parser_rgb(rgbtxt)
-    tab_couleur = color_alpha(dico)
+    dico_color = parser_rgb(rgbtxt)
+    tab_color = color_alpha(dico_color)
+    nbr_color = len(tab_color)
+    print(nbr_color)
+    nbr_colonne = 18
+    nb_ligne = 1+(nbr_color)/nbr_colonne
 
     root = tk.Tk()
     ftop1 = tk.Toplevel(root)
-
     var = tk.StringVar()
-
     canv = tk.Canvas(ftop1)
-    canv.pack()
-
     fram = tk.Frame(ftop1)
-    fram.pack()
+    lab = tk.Label(ftop1, text=var)
+
+    lab.pack(side="top")
+    canv.pack()
+    fram.pack(side="bottom")
 
     boutton = {}
     for mesg in ("Ok", "Annuler"):
         boutton[mesg] = tk.Button(fram, text=mesg)
         boutton[mesg].pack(side="left")
+
+    square_color = {}
+    canv_ligne = {}
+    indice_ligne = -1
+    i = 0
+    for color in dico_color:
+        if i == 0:
+            indice_ligne += 1
+            canv_ligne[indice_ligne] = tk.Canvas(canv, height=20)
+            canv_ligne[indice_ligne].pack(side="top")
+        bg_color = '#{0:02x}{1:02x}{2:02x}'.format(dico_color[color][0],
+                                                   dico_color[color][1],
+                                                   dico_color[color][2])
+        square_color[color] = canv_ligne[indice_ligne].create_rectangle(
+                                    i*20+5, 5, i*20+25, 25,
+                                    fill=bg_color, tags=("couleur", color))
+        i += 1
+        i = i % nbr_colonne
 
     root.mainloop()
