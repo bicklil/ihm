@@ -22,6 +22,8 @@ def parser_rgb(file_open):
     et renvoie un dictionnaire """
     next(file_open)  # on saute la premiere ligne du rgb elle sert a rien
     dico = {}
+    # on decompose toutes lse lignes sous le format r g b nom
+    # puis on ajoute au dico
     for line in file_open:
         linecollapse = line.split()
 # on test s'il y a un espace dans le nom de la couleur si oui on l'enleve
@@ -73,6 +75,7 @@ if __name__ == "__main__":
     nbr_colonne = 18
     nb_ligne = 1+(nbr_color)/nbr_colonne
 
+    # initialisation des principaux éléments
     root = tk.Tk()
     ftop1 = tk.Toplevel(root)
     var = tk.StringVar()
@@ -80,15 +83,19 @@ if __name__ == "__main__":
     fram = tk.Frame(ftop1)
     lab = tk.Label(ftop1, text=var)
 
+    # placement de la premiere couche d'element
     lab.pack(side="top")
     canv.pack()
     fram.pack(side="bottom")
 
-    boutton = {}
+    boutton = {}  # mise en place des boutons
     for mesg in ("Ok", "Annuler"):
         boutton[mesg] = tk.Button(fram, text=mesg)
         boutton[mesg].pack(side="left")
 
+    # mise en place des couleurs dans des rectangles
+    # les rectangles depandent d'un canevas horizontal pour les lignes
+    # chaque rectangle a comme tag le nom de la couleur et le tag "couleur"
     square_color = {}
     canv_ligne = {}
     indice_ligne = -1
