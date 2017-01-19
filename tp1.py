@@ -70,6 +70,7 @@ def color_alpha(dico):
 if __name__ == "__main__":
     rgbtxt = ouvrir_fichier("/etc/X11/rgb.txt")
     dico_color = parser_rgb(rgbtxt)
+    rgbtxt.close()
     tab_color = color_alpha(dico_color)
     nbr_color = len(tab_color)
     print(nbr_color)
@@ -80,15 +81,17 @@ if __name__ == "__main__":
     root = tk.Tk()
     ftop1 = tk.Toplevel(root)
     var = tk.StringVar()
-    canv = tk.Canvas(ftop1)
+    canv = tk.Canvas(ftop1, width=300, height=300, scrollregion=(0,0,1000,1000))
     fram = tk.Frame(ftop1)
     lab = tk.Label(ftop1, text=var)
-    scroll = tk.Scrollbar(canv)
-
+    scroll = tk.Scrollbar(ftop1)
+    
     # placement de la premiere couche d'element
     lab.pack(side="top")
+    scroll.pack(side="right",fill=tk.Y)
+    scroll.config(command=canv.yview)
+    canv.config(yscrollcommand=scroll.set)
     canv.pack()
-    scroll.pack(side="right")
     fram.pack(side="bottom")
 
     boutton = {}  # mise en place des boutons
@@ -106,13 +109,11 @@ if __name__ == "__main__":
     for color in dico_color:
         if i == 0:
             indice_ligne += 1
-            canv_ligne[indice_ligne] = tk.Canvas(canv, height=20)
-            canv_ligne[indice_ligne].pack(side="top")
         bg_color = '#{0:02x}{1:02x}{2:02x}'.format(dico_color[color][0],
                                                    dico_color[color][1],
                                                    dico_color[color][2])
-        square_color[color] = canv_ligne[indice_ligne].create_rectangle(
-                                    i*20+5, 5, i*20+25, 25,
+        square_color[color] = canv.create_rectangle(
+                                    i*20+5, 5+20*indice_ligne, i*20+25, 25+20*indice_ligne,
                                     fill=bg_color, tags=("couleur", color))
         i += 1
         i = i % nbr_colonne
