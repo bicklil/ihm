@@ -72,23 +72,27 @@ if __name__ == "__main__":
     dico_color = parser_rgb(rgbtxt)
     rgbtxt.close()
     tab_color = color_alpha(dico_color)
-    nbr_color = len(tab_color)
-    print(nbr_color)
-    nbr_colonne = 18
-    nb_ligne = 1+(nbr_color)/nbr_colonne
+    nb_color = len(tab_color)
+    nb_colonne = 14
+    nb_ligne = (nb_color)/nb_colonne
+    nb_ligne_a_afficher = 10
+    if nb_color % nb_colonne != 0:
+        nb_ligne += 1
 
     # initialisation des principaux éléments
     root = tk.Tk()
     ftop1 = tk.Toplevel(root)
     var = tk.StringVar()
-    canv = tk.Canvas(ftop1, width=300, height=300, scrollregion=(0,0,1000,1000))
+    canv = tk.Canvas(ftop1, width=10+nb_colonne * 20,
+                     height=10+nb_ligne_a_afficher*20,
+                     scrollregion=(0, 0, 10+nb_colonne*20, 10+nb_ligne*20))
     fram = tk.Frame(ftop1)
     lab = tk.Label(ftop1, text=var)
     scroll = tk.Scrollbar(ftop1)
-    
+
     # placement de la premiere couche d'element
     lab.pack(side="top")
-    scroll.pack(side="right",fill=tk.Y)
+    scroll.pack(side="right", fill=tk.Y)
     scroll.config(command=canv.yview)
     canv.config(yscrollcommand=scroll.set)
     canv.pack()
@@ -100,7 +104,6 @@ if __name__ == "__main__":
         boutton[mesg].pack(side="left")
 
     # mise en place des couleurs dans des rectangles
-    # les rectangles depandent d'un canevas horizontal pour les lignes
     # chaque rectangle a comme tag le nom de la couleur et le tag "couleur"
     square_color = {}
     canv_ligne = {}
@@ -113,9 +116,10 @@ if __name__ == "__main__":
                                                    dico_color[color][1],
                                                    dico_color[color][2])
         square_color[color] = canv.create_rectangle(
-                                    i*20+5, 5+20*indice_ligne, i*20+25, 25+20*indice_ligne,
+                                    i*20+5, 5+20*indice_ligne,
+                                    i*20+25, 25+20*indice_ligne,
                                     fill=bg_color, tags=("couleur", color))
         i += 1
-        i = i % nbr_colonne
+        i = i % nb_colonne
 
     root.mainloop()
