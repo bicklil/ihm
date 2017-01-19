@@ -1,13 +1,19 @@
 import tkinter as tk
 
 
+def clic_couleur(event, color, var, lab):
+    """ callback apres avoir click sur une couleur
+    qui implique une mise a jour du texte"""
+    var.set(color)
+    lab["text"] = var.get()
+
+
 def ouvrir_fichier(file):
     """ ouvre un fichier
     si reussi retourne le file descriptor
     si echoue affiche les erreurs d ouverture"""
     try:
         file_open = open(file, "r")
-        print("reussi\n")
         return file_open
     except OSError as e:
         print("errno: ", e.errno)
@@ -26,7 +32,7 @@ def parser_rgb(file_open):
     # puis on ajoute au dico
     for line in file_open:
         linecollapse = line.split()
-# on test s'il y a un espace dans le nom de la couleur si oui on l'enleve
+        # on test s'il y a un espace dans le nom de la couleur
         while len(linecollapse) > 4:
             linecollapse[3] = linecollapse[3]+linecollapse[4]
             del linecollapse[4]
@@ -71,6 +77,8 @@ if __name__ == "__main__":
     rgbtxt = ouvrir_fichier("/etc/X11/rgb.txt")
     dico_color = parser_rgb(rgbtxt)
     rgbtxt.close()
+
+    # init de variable
     tab_color = color_alpha(dico_color)
     nb_color = len(tab_color)
     nb_colonne = 14
@@ -83,16 +91,18 @@ if __name__ == "__main__":
     root = tk.Tk()
     ftop1 = tk.Toplevel(root)
     var = tk.StringVar()
+    var.set("NULL")
     canv = tk.Canvas(ftop1, width=10+nb_colonne * 20,
                      height=10+nb_ligne_a_afficher*20,
                      scrollregion=(0, 0, 10+nb_colonne*20, 10+nb_ligne*20))
     fram = tk.Frame(ftop1)
-    lab = tk.Label(ftop1, text=var)
+    lab = tk.Label(ftop1, text=var.get())
     scroll = tk.Scrollbar(ftop1)
 
     # placement de la premiere couche d'element
     lab.pack(side="top")
     scroll.pack(side="right", fill=tk.Y)
+    # mise en place de la scrollbar
     scroll.config(command=canv.yview)
     canv.config(yscrollcommand=scroll.set)
     canv.pack()
@@ -119,6 +129,10 @@ if __name__ == "__main__":
                                     i*20+5, 5+20*indice_ligne,
                                     i*20+25, 25+20*indice_ligne,
                                     fill=bg_color, tags=("couleur", color))
+        # ajout du tag bind pour le click sur une couleur
+        canv.tag_bind(color, "<Button-1>",
+                      lambda event, color=color:
+                      clic_couleur(0, color, var, lab))
         i += 1
         i = i % nb_colonne
 
