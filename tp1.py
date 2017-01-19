@@ -27,12 +27,13 @@ def parser_rgb(file_open):
     for line in file_open:
         linecollapse = line.split()
 # on test s'il y a un espace dans le nom de la couleur si oui on l'enleve
-        if len(linecollapse) == 5:
+        while len(linecollapse) > 4:
             linecollapse[3] = linecollapse[3]+linecollapse[4]
+            del linecollapse[4]
 
         linecollapse[3] = linecollapse[3].lower()
         test = False
-        for color in dico:  # on regarde si la couleur est pas deja mis
+        for color in dico:  # on regarde si la couleur est pas deja mise
             if color == linecollapse[3]:
                 test = True
                 break
@@ -82,10 +83,12 @@ if __name__ == "__main__":
     canv = tk.Canvas(ftop1)
     fram = tk.Frame(ftop1)
     lab = tk.Label(ftop1, text=var)
+    scroll = tk.Scrollbar(canv)
 
     # placement de la premiere couche d'element
     lab.pack(side="top")
     canv.pack()
+    scroll.pack(side="right")
     fram.pack(side="bottom")
 
     boutton = {}  # mise en place des boutons
