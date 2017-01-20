@@ -1,11 +1,18 @@
 import tkinter as tk
 
+def click_ok(lab,var,ftop):
+    var.set(lab["text"])
+    print(var.get())
+    ftop.destroy()
 
-def clic_couleur(event, color, var, lab):
+def click_annuler(ftop):
+    ftop.destroy()
+
+
+def clic_couleur(color,  lab):
     """ callback apres avoir click sur une couleur
     qui implique une mise a jour du texte"""
-    var.set(color)
-    lab["text"] = var.get()
+    lab["text"] = color
 
 
 def ouvrir_fichier(file):
@@ -33,15 +40,18 @@ def parser_rgb(file_open):
     for line in file_open:
         linecollapse = line.split()
         # on test s'il y a un espace dans le nom de la couleur
-        while len(linecollapse) > 4:
+        test = True
+        for rgb in dico.values():
+            if rgb == (int(linecollapse[0]),int(linecollapse[1]),int(linecollapse[2])):
+                test = False
+        while len(linecollapse) > 4 and test:
             linecollapse[3] = linecollapse[3]+linecollapse[4]
             del linecollapse[4]
-
-        linecollapse[3] = linecollapse[3].lower()
-        dico[linecollapse[3]] = (int(linecollapse[0]),
+        if test:
+            linecollapse[3] = linecollapse[3].lower()
+            dico[linecollapse[3]] = (int(linecollapse[0]),
                                      int(linecollapse[1]),
                                      int(linecollapse[2]))
-
     return dico
 
 
@@ -108,6 +118,8 @@ def bazarre():
         boutton[mesg] = tk.Button(fram, text=mesg)
         boutton[mesg].pack(side="left")
 
+    boutton["Ok"].config(command=lambda: click_ok(lab, var, ftop1))
+    boutton["Annuler"].config(command=lambda:click_annuler(ftop1))
     # mise en place des couleurs dans des rectangles
     # chaque rectangle a comme tag le nom de la couleur et le tag "couleur"
     square_color = {}
@@ -132,7 +144,7 @@ def bazarre():
         # ajout du tag bind pour le click sur une couleur
         canv.tag_bind(color, "<Button-1>",
                       lambda event, color=color:
-                      clic_couleur(0, color, var, lab))
+                      clic_couleur(color, lab))
         i += 1
         i = i % nb_colonne
 
