@@ -38,14 +38,7 @@ def parser_rgb(file_open):
             del linecollapse[4]
 
         linecollapse[3] = linecollapse[3].lower()
-        test = False
-        for color in dico:  # on regarde si la couleur est pas deja mise
-            if color == linecollapse[3]:
-                test = True
-                break
-
-        if not test:
-            dico[linecollapse[3]] = (int(linecollapse[0]),
+        dico[linecollapse[3]] = (int(linecollapse[0]),
                                      int(linecollapse[1]),
                                      int(linecollapse[2]))
 
@@ -73,7 +66,7 @@ def color_alpha(dico):
     return tab_color
 
 
-if __name__ == "__main__":
+def bazarre():
     rgbtxt = ouvrir_fichier("/etc/X11/rgb.txt")
     dico_color = parser_rgb(rgbtxt)
     rgbtxt.close()
@@ -81,9 +74,11 @@ if __name__ == "__main__":
     # init de variable
     tab_color = color_alpha(dico_color)
     nb_color = len(tab_color)
-    nb_colonne = 14
+    nb_colonne = 18
     nb_ligne = (nb_color)/nb_colonne
     nb_ligne_a_afficher = 10
+    cote_square = 20
+    ecart = 2
     if nb_color % nb_colonne != 0:
         nb_ligne += 1
 
@@ -92,9 +87,9 @@ if __name__ == "__main__":
     ftop1 = tk.Toplevel(root)
     var = tk.StringVar()
     var.set("NULL")
-    canv = tk.Canvas(ftop1, width=10+nb_colonne * 20,
-                     height=10+nb_ligne_a_afficher*20,
-                     scrollregion=(0, 0, 10+nb_colonne*20, 10+nb_ligne*20))
+    canv = tk.Canvas(ftop1, width=ecart+nb_colonne * (cote_square+ecart),
+                     height=ecart+nb_ligne_a_afficher* (cote_square+ecart),
+                     scrollregion=(0, 0, 10+nb_colonne*cote_square, ecart+nb_ligne* (cote_square+ecart)))
     fram = tk.Frame(ftop1)
     lab = tk.Label(ftop1, text=var.get())
     scroll = tk.Scrollbar(ftop1)
@@ -119,15 +114,20 @@ if __name__ == "__main__":
     canv_ligne = {}
     indice_ligne = -1
     i = 0
-    for color in dico_color:
+    for color in sorted(dico_color.keys()):
         if i == 0:
             indice_ligne += 1
         bg_color = '#{0:02x}{1:02x}{2:02x}'.format(dico_color[color][0],
                                                    dico_color[color][1],
                                                    dico_color[color][2])
+        x1 = i*cote_square +ecart + i*ecart
+        y1 = ecart+cote_square*indice_ligne + ecart *indice_ligne
+        x2 = (i+1)*cote_square + (i+1)*ecart
+        y2 = cote_square*(indice_ligne+1) + ecart * (indice_ligne+1)
+
+
         square_color[color] = canv.create_rectangle(
-                                    i*20+5, 5+20*indice_ligne,
-                                    i*20+25, 25+20*indice_ligne,
+                                    x1, y1, x2, y2,
                                     fill=bg_color, tags=("couleur", color))
         # ajout du tag bind pour le click sur une couleur
         canv.tag_bind(color, "<Button-1>",
@@ -137,3 +137,28 @@ if __name__ == "__main__":
         i = i % nb_colonne
 
     root.mainloop()
+
+"""      1 ecart
+            <-+
+
+            +--------------------------------------------+
+1 ecart  ^  |                                            |
+         +  |  +--------+     +---------+    +---------+ |
+            |  |        |     |         |    |         | |
+            |  |        |     |         |    |         | |
+            |  |        |     |         |    |         | |
+            |  |        |     |         |    |         | |
+            |  +--------+     +---------+    +---------+ |
+            |                                            |
+            |  <------->                <--->            |
+            |                                            |
+            |    longeur_carre           1 ecart         |
+            |                                            |
+            |                                            |
+            |                                            |
+            |                                            |
+            |                                            |
+            +--------------------------------------------+"""
+
+if __name__ == "__main__":
+    bazarre()
