@@ -1,9 +1,11 @@
 import tkinter as tk
 
-def click_ok(lab,var,ftop):
+
+def click_ok(lab, var, ftop):
     var.set(lab["text"])
     print(var.get())
     ftop.destroy()
+
 
 def click_annuler(ftop):
     ftop.destroy()
@@ -42,7 +44,8 @@ def parser_rgb(file_open):
         # on test s'il y a un espace dans le nom de la couleur
         test = True
         for rgb in dico.values():
-            if rgb == (int(linecollapse[0]),int(linecollapse[1]),int(linecollapse[2])):
+            if rgb == (int(linecollapse[0]), int(linecollapse[1]),
+                       int(linecollapse[2])):
                 test = False
         while len(linecollapse) > 4 and test:
             linecollapse[3] = linecollapse[3]+linecollapse[4]
@@ -98,8 +101,9 @@ def bazarre():
     var = tk.StringVar()
     var.set("NULL")
     canv = tk.Canvas(ftop1, width=ecart+nb_colonne * (cote_square+ecart),
-                     height=ecart+nb_ligne_a_afficher* (cote_square+ecart),
-                     scrollregion=(0, 0, 10+nb_colonne*cote_square, ecart+nb_ligne* (cote_square+ecart)))
+                     height=ecart+nb_ligne_a_afficher * (cote_square+ecart),
+                     scrollregion=(0, 0, 0,
+                     ecart+nb_ligne * (cote_square+ecart)))
     fram = tk.Frame(ftop1)
     lab = tk.Label(ftop1, text=var.get())
     scroll = tk.Scrollbar(ftop1)
@@ -119,7 +123,7 @@ def bazarre():
         boutton[mesg].pack(side="left")
 
     boutton["Ok"].config(command=lambda: click_ok(lab, var, ftop1))
-    boutton["Annuler"].config(command=lambda:click_annuler(ftop1))
+    boutton["Annuler"].config(command=lambda: click_annuler(ftop1))
     # mise en place des couleurs dans des rectangles
     # chaque rectangle a comme tag le nom de la couleur et le tag "couleur"
     square_color = {}
@@ -132,11 +136,10 @@ def bazarre():
         bg_color = '#{0:02x}{1:02x}{2:02x}'.format(dico_color[color][0],
                                                    dico_color[color][1],
                                                    dico_color[color][2])
-        x1 = i*cote_square +ecart + i*ecart
-        y1 = ecart+cote_square*indice_ligne + ecart *indice_ligne
+        x1 = i*cote_square + ecart + i*ecart
+        y1 = ecart+cote_square*indice_ligne + ecart * indice_ligne
         x2 = (i+1)*cote_square + (i+1)*ecart
         y2 = cote_square*(indice_ligne+1) + ecart * (indice_ligne+1)
-
 
         square_color[color] = canv.create_rectangle(
                                     x1, y1, x2, y2,
