@@ -2,13 +2,23 @@ import tkinter as tk
 
 
 def mouse_wheel(event):
-
     if event.num == 5:
         pas = 1
     if event.num == 4:
         pas = -1
     event.widget.yview_scroll(pas, tk.UNITS)
 
+def couleur_surligne(event):
+    canv = event.widget
+    rect = canv.find_withtag("current")[0]
+    canv.itemconfig(rect, outline="red")
+    canv.itemconfig(rect, width=1.5)
+
+def couleur_desurligne(event):
+    canv = event.widget
+    rect = canv.find_withtag("current")[0]
+    canv.itemconfig(rect, outline="black")
+    canv.itemconfig(rect, width=1)
 
 def click_ok(lab, var, ftop):
     var.set(lab["text"])
@@ -157,6 +167,8 @@ def bazarre():
         canv.tag_bind(color, "<Button-1>",
                       lambda event, color=color:
                       clic_couleur(color, lab))
+        canv.tag_bind(color, "<Enter>", couleur_surligne)
+        canv.tag_bind(color, "<Leave>", couleur_desurligne)
         i += 1
         i = i % nb_colonne
 
