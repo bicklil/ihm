@@ -1,6 +1,15 @@
 import tkinter as tk
 
 
+def mouse_wheel(event):
+
+    if event.num == 5:
+        pas = 1
+    if event.num == 4:
+        pas = -1
+    event.widget.yview_scroll(pas, tk.UNITS)
+
+
 def click_ok(lab, var, ftop):
     var.set(lab["text"])
     print(var.get())
@@ -150,6 +159,9 @@ def bazarre():
                       clic_couleur(color, lab))
         i += 1
         i = i % nb_colonne
+
+    canv.bind("<Button-4>", mouse_wheel)
+    canv.bind("<Button-5>", mouse_wheel)
 
     root.mainloop()
 
