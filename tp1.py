@@ -2,31 +2,44 @@ import tkinter as tk
 
 
 def mouse_wheel(event):
+    """ callback permettant de modifier
+    la position en y du canvas a l'aide de la molette"""
     if event.num == 5:
         pas = 1
     if event.num == 4:
         pas = -1
     event.widget.yview_scroll(pas, tk.UNITS)
 
+
 def couleur_surligne(event):
+    """ callback modifier le contour
+    d'un rectangle au survol de la souris """
     canv = event.widget
     rect = canv.find_withtag("current")[0]
     canv.itemconfig(rect, outline="red")
     canv.itemconfig(rect, width=1.5)
 
+
 def couleur_desurligne(event):
+    """ callback remetant a l'etat initial si
+    la souris sort d'un rectangle"""
     canv = event.widget
     rect = canv.find_withtag("current")[0]
     canv.itemconfig(rect, outline="black")
     canv.itemconfig(rect, width=1)
 
+
 def click_ok(lab, var, ftop):
+    """ callback sur le click du bouton ok
+    permettant de sauvegarder la derniere couleur cliqué
+    et de close la fenetre"""
     var.set(lab["text"])
     print(var.get())
     ftop.destroy()
 
 
 def click_annuler(ftop):
+    """ callback du clique annuler qui ferme la fenetre"""
     ftop.destroy()
 
 
@@ -56,16 +69,17 @@ def parser_rgb(file_open):
     et renvoie un dictionnaire """
     next(file_open)  # on saute la premiere ligne du rgb elle sert a rien
     dico = {}
-    # on decompose toutes lse lignes sous le format r g b nom
+    # on decompose toutes les lignes sous le format r g b nom
     # puis on ajoute au dico
     for line in file_open:
         linecollapse = line.split()
-        # on test s'il y a un espace dans le nom de la couleur
+        # on test si le tuple n'existe pas deja dans le dico
         test = True
         for rgb in dico.values():
             if rgb == (int(linecollapse[0]), int(linecollapse[1]),
                        int(linecollapse[2])):
                 test = False
+        # s' il existe pas on enleve les espaces du nom
         while len(linecollapse) > 4 and test:
             linecollapse[3] = linecollapse[3]+linecollapse[4]
             del linecollapse[4]
@@ -99,6 +113,7 @@ def color_alpha(dico):
 
 
 def bazarre():
+    """ fonction a split en plusieur sous fonction"""
     rgbtxt = ouvrir_fichier("/etc/X11/rgb.txt")
     dico_color = parser_rgb(rgbtxt)
     rgbtxt.close()
@@ -174,30 +189,10 @@ def bazarre():
 
     canv.bind("<Button-4>", mouse_wheel)
     canv.bind("<Button-5>", mouse_wheel)
-
+    ftop1.grab_set()
+    ftop1.focus_set()
     root.mainloop()
 
-"""      1 ecart
-            <-+
-
-            +--------------------------------------------+
-1 ecart  ^  |                                            |
-         +  |  +--------+     +---------+    +---------+ |
-            |  |        |     |         |    |         | |
-            |  |        |     |         |    |         | |
-            |  |        |     |         |    |         | |
-            |  |        |     |         |    |         | |
-            |  +--------+     +---------+    +---------+ |
-            |                                            |
-            |  <------->                <--->            |
-            |                                            |
-            |    longeur_carre           1 ecart         |
-            |                                            |
-            |                                            |
-            |                                            |
-            |                                            |
-            |                                            |
-            +--------------------------------------------+"""
 
 if __name__ == "__main__":
     bazarre()
