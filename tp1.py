@@ -112,13 +112,12 @@ def color_alpha(dico):
     return TabColor
 
 
-def bazarre():
-    """ fonction a split en plusieur sous fonction"""
+def init_variable():
+    """recupere toutes les données necessaire au fonctionnement du prog"""
     RgbTxt = ouvrir_fichier("/etc/X11/rgb.txt")
     DicoColor = parser_rgb(RgbTxt)
     RgbTxt.close()
 
-    # init de variable
     TabColor = color_alpha(DicoColor)
     NbColor = len(TabColor)
     NbColonne = 18
@@ -129,7 +128,12 @@ def bazarre():
     if NbColor % NbColonne != 0:
         NbLigne += 1
 
-    # initialisation des principaux éléments
+    return (DicoColor, NbColonne, NbLigne,
+            NbLigne_a_afficher, CoteCarre, Ecart)
+
+
+def tk_init(Ecart, NbColonne, NbLigne, NbLigne_a_afficher, CoteCarre):
+    """cree toute les instances de widget necessaire"""
     Root = tk.Tk()
     TopLevel1 = tk.Toplevel(Root)
     Var = tk.StringVar()
@@ -140,26 +144,40 @@ def bazarre():
                      Ecart+NbLigne * (CoteCarre+Ecart)))
     Fram = tk.Frame(TopLevel1)
     Lab = tk.Label(TopLevel1, text=Var.get())
-    scroll = tk.Scrollbar(TopLevel1)
-
-    # placement de la premiere couche d'element
-    Lab.pack(side="top")
-    scroll.pack(side="right", fill=tk.Y)
-    # mise en place de la scrollbar
-    scroll.config(command=Canv.yview)
-    Canv.config(yscrollcommand=scroll.set)
-    Canv.pack()
-    Fram.pack(side="bottom")
-
-    Boutton = {}  # mise en place des boutons
+    Scroll = tk.Scrollbar(TopLevel1)
+    Boutton = {}
     for Mesg in ("Ok", "Annuler"):
         Boutton[Mesg] = tk.Button(Fram, text=Mesg)
-        Boutton[Mesg].pack(side="left")
 
+    return (TopLevel1, Canv, Fram, Lab, Scroll, Var, Root, Boutton)
+
+
+def tk_placement_topLevel(Lab, Scroll, Canv, Fram, Boutton):
+    """place les widget sur la TopLevel"""
+    Lab.pack(side="top")
+    Scroll.pack(side="right", fill=tk.Y)
+    Canv.pack()
+    Fram.pack(side="bottom")
+    Boutton["Ok"].pack(side="left")
+    Boutton["Annuler"].pack(side="left")
+
+
+def config_widget(Scroll, Canv, Boutton, Lab, TopLevel1, Var):
+    """ lie la scrollbar et le canvas
+    lie les boutons a leur fonction respective
+    lie la molette au scroll"""
+    Scroll.config(command=Canv.yview)
+    Canv.config(yscrollcommand=Scroll.set)
     Boutton["Ok"].config(command=lambda: click_ok(Lab, Var, TopLevel1))
     Boutton["Annuler"].config(command=lambda: click_annuler(TopLevel1))
-    # mise en place des couleurs dans des rectangles
-    # chaque rectangle a comme tag le nom de la couleur et le tag "couleur"
+    Canv.bind("<Button-4>", mouse_wheel)
+    Canv.bind("<Button-5>", mouse_wheel)
+
+
+def creation_carre(DicoColor, CoteCarre, Ecart, Lab, NbColonne):
+    """mise en place des couleurs dans des rectangles
+    chaque rectangle a comme tag le nom de la couleur et le tag "couleur"
+    association des events avec les tags"""
     SquareColor = {}
     indice_ligne = -1
     i = 0
@@ -178,21 +196,33 @@ def bazarre():
         SquareColor[Color] = Canv.create_rectangle(
                                     x1, y1, x2, y2,
                                     fill=bg_color, tags=("couleur", Color))
+
         # ajout du tag bind pour le click sur une couleur
         Canv.tag_bind(Color, "<Button-1>",
                       lambda event, Color=Color:
                       clic_couleur(Color, Lab))
+
+        # ajout des fonctions surlignagne du carre au survol de la souris
         Canv.tag_bind(Color, "<Enter>", couleur_surligne)
         Canv.tag_bind(Color, "<Leave>", couleur_desurligne)
         i += 1
         i = i % NbColonne
 
-    Canv.bind("<Button-4>", mouse_wheel)
-    Canv.bind("<Button-5>", mouse_wheel)
-    TopLevel1.grab_set()
-    TopLevel1.focus_set()
-    Root.mainloop()
-
 
 if __name__ == "__main__":
-    bazarre()
+    (DicoColor, NbColonne, NbLigne,
+     NbLigne_a_afficher, CoteCarre, Ecart) = init_variable()
+
+    (TopLevel1, Canv, Fram,
+     Lab, Scroll, Var, Root, Boutton) = tk_init(Ecart, NbColonne, NbLigne,
+                                                NbLigne_a_afficher, CoteCarre)
+
+    tk_placement_topLevel(Lab, Scroll, Canv, Fram, Boutton)
+    config_widget(Scroll, Canv, Boutton, Lab, TopLevel1, Var)
+
+    creation_carre(DicoColor, CoteCarre, Ecart, Lab, NbColonne)
+
+    TopLevel1.grab_set()
+    TopLevel1.focus_set()
+
+    Root.mainloop()
