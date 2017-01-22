@@ -115,7 +115,13 @@ def color_alpha(dico):
 
 
 def usage():
-    pass
+    print("executable affichant les couleurs associées au rgb.txt")
+    print("\n-h ,--help : affiche l'aide")
+    print("-d ,--default : garde les valeurs par defaut")
+    print("--colonne= : modifie le nombre de colonne de carre a l'ecran")
+    print("--ecart= : modifie l'ecart entre les carrés")
+    print("--ligne= : modifie le nombre de ligne a afficher")
+    print("--cote= : modifie la longeur des cotés des carrés")
 
 
 def recuperation_arg():
@@ -134,7 +140,7 @@ def recuperation_arg():
     Ligne = 10
     CoteCarre = 20
     for opt, arg in opts:
-        if opt == "-d":
+        if opt in ("-d", "--default"):
             return (Ecart, colonne, Ligne, CoteCarre)
         elif opt in ("-h", "--help"):
             usage()
