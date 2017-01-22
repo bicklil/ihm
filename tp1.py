@@ -115,6 +115,7 @@ def color_alpha(dico):
 
 
 def usage():
+    """texte a afficher avec l'option -h ou --help dans le terminal"""
     print("executable affichant les couleurs associées au rgb.txt")
     print("\n-h ,--help : affiche l'aide")
     print("-d ,--default : garde les valeurs par defaut")
