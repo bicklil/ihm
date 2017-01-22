@@ -1,4 +1,6 @@
 import tkinter as tk
+import getopt
+import sys
 
 
 def mouse_wheel(event):
@@ -112,19 +114,73 @@ def color_alpha(dico):
     return TabColor
 
 
+def usage():
+    pass
+
+
+def recuperation_arg():
+    """recupere les arguments sur la ligne de commande"""
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "hd", ["help", "colonne=",
+                                                        "ecart=", "default",
+                                                        "ligne=", "cote="])
+    except getopt.GetoptError as err:
+        print(err)
+        print("essayez avec -h pour plus d'informations")
+        sys.exit(2)
+
+    Ecart = 2
+    colonne = 18
+    Ligne = 10
+    CoteCarre = 20
+    for opt, arg in opts:
+        if opt == "-d":
+            return (Ecart, colonne, Ligne, CoteCarre)
+        elif opt in ("-h", "--help"):
+            usage()
+            sys.exit()
+        elif opt == "--ecart":
+            print(arg)
+            if arg.isdigit():
+                Ecart = int(arg)
+            else:
+                print("ecart doit etre un int")
+                sys.exit(3)
+        elif opt == "--colonne":
+            if arg.isdigit():
+                colonne = int(arg)
+            else:
+                print("colonne doit etre un int")
+                sys.exit(3)
+        elif opt == "--ligne":
+            if arg.isdigit():
+                Ligne = int(arg)
+            else:
+                print("ligne doit etre un int")
+                sys.exit(3)
+        elif opt == "--cote":
+            if arg.isdigit():
+                CoteCarre = int(arg)
+            else:
+                print("cote doit etre un int")
+                sys.exit(3)
+        else:
+            assert False, "unhandled option"
+
+    return (Ecart, colonne, Ligne, CoteCarre)
+
+
 def init_variable():
     """recupere toutes les données necessaire au fonctionnement du prog"""
+    (Ecart, NbColonne, NbLigne_a_afficher, CoteCarre) = recuperation_arg()
     RgbTxt = ouvrir_fichier("/etc/X11/rgb.txt")
     DicoColor = parser_rgb(RgbTxt)
     RgbTxt.close()
 
     TabColor = color_alpha(DicoColor)
     NbColor = len(TabColor)
-    NbColonne = 18
     NbLigne = (NbColor)/NbColonne
-    NbLigne_a_afficher = 10
-    CoteCarre = 20
-    Ecart = 2
+
     if NbColor % NbColonne != 0:
         NbLigne += 1
 
