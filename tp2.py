@@ -53,6 +53,31 @@ def release_key(event, points):
     print("test")
 
 
+def menu_nouveau():
+    """Fonction associée au boutton nouveau du menu"""
+    pass
+
+
+def menu_ouvrir():
+    """Fonction associée au boutton ouvrir du menu"""
+    pass
+
+
+def menu_sauver():
+    """Fonction associée au boutton sauver du menu"""
+    pass
+
+
+def menu_quitter():
+    """Fonction associée au boutton quitter du menu"""
+    pass
+
+
+def ouvrir_commande():
+    """ouvre l'aide apres appuie sur le bouton aide"""
+    pass
+
+
 def initialisation_tk():
     """prepare tous les widgets necessaires à l'appli"""
     Root = tk.Tk()
@@ -62,17 +87,29 @@ def initialisation_tk():
     Vstr.set("test")
     MenuBar = tk.Menu(Root)
     MenuFichier = tk.Menu(MenuBar, tearoff=0)
-    return(Root, Canv, Label, MenuBar, MenuFichier, Vstr)
+    BoutonAide = tk.Menubutton(MenuBar)
+    return(Root, Canv, Label, MenuBar, MenuFichier, Vstr, BoutonAide)
 
 
-def configuration_tk(Root, Menubar, MenuFichier):
+def configuration_tk(Root, MenuBar, MenuFichier, BoutonAide):
     """modifie les widgets"""
+    BoutonAide.config(text="Aide", command=ouvrir_commande)
     Root.config(menu=MenuBar)
+
+    MenuFichier.add_command(label="Nouveau",
+                            command=menu_nouveau)
+    MenuFichier.add_command(label="Ouvrir",
+                            command=menu_ouvrir)
+    MenuFichier.add_command(label="Sauver",
+                            command=menu_sauver)
+    MenuFichier.add_command(label="Quitter",
+                            command=menu_quitter)
     MenuBar.add_cascade(label="Fichier", menu=MenuFichier)
 
 
-def placement_tk(Label, Canv):
+def placement_tk(Label, Canv, BoutonAide):
     """place les widgets sur le canv"""
+    BoutonAide.pack(anchor="ne")
     Label.pack(side="bottom", fill=tk.X)
     Canv.pack()
 
@@ -88,8 +125,10 @@ def Canv_call(Canv):
 
 
 if __name__ == "__main__":
-    (Root, Canv, Label, MenuBar, MenuFichier, Vstr) = initialisation_tk()
-    configuration_tk(Root, MenuBar, MenuFichier)
-    placement_tk(Label, Canv)
+    (Root, Canv, Label, MenuBar,
+     MenuFichier, Vstr, BoutonAide) = initialisation_tk()
+
+    configuration_tk(Root, MenuBar, MenuFichier, BoutonAide)
+    placement_tk(Label, Canv, BoutonAide)
     Canv_call(Canv)
     Root.mainloop()
