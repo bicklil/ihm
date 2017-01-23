@@ -1,7 +1,5 @@
 import tkinter as tk
 
-global droite
-
 
 def couleur_surligne(event):
     """ callback modifier le contour
@@ -29,7 +27,6 @@ def update_label(event):
 
 
 def ctrl_click(event, points):
-    global droite
     Canv = event.widget
     X = event.x
     Y = event.y
@@ -38,7 +35,9 @@ def ctrl_click(event, points):
         Canv.tag_bind(droite, "<Enter>", couleur_surligne)
         Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
     else:
+        droite = Canv.find_all()[-1]
         Canv.coords(droite, *points, X, Y)
+
     points.append(X)
     points.append(Y)
 
