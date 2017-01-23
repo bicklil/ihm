@@ -2,8 +2,8 @@ import tkinter as tk
 
 
 def couleur_surligne(event):
-    """ callback modifier le contour
-    d'un rectangle au survol de la souris """
+    """ callback modifier le trait
+    au survol de la souris """
     Canv = event.widget
     droite = Canv.find_withtag("current")[0]
     Canv.itemconfig(droite, fill="red")
@@ -12,7 +12,7 @@ def couleur_surligne(event):
 
 def couleur_desurligne(event):
     """ callback remetant a l'etat initial si
-    la souris sort d'un rectangle"""
+    la souris s'ecarte du trait"""
     Canv = event.widget
     droite = Canv.find_withtag("current")[0]
     Canv.tag_bind(droite, "<Button-1>", update_label)
@@ -21,21 +21,24 @@ def couleur_desurligne(event):
 
 
 def update_label(event):
+    """modifie le label au click sue le trait"""
     Canv = event.widget
     droite = Canv.find_withtag("current")[0]
     Vstr.set(droite)
 
 
 def ctrl_click(event, points):
+    """ajoute un point a droite en cours de creation
+    si on a pas de trait en cours on en cree un"""
     Canv = event.widget
     X = event.x
     Y = event.y
-    if len(points) == 0:
+    if len(points) == 0:  # pas de trait en cours
         droite = Canv.create_line(X, Y, X, Y)
         Canv.tag_bind(droite, "<Enter>", couleur_surligne)
         Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
     else:
-        droite = Canv.find_all()[-1]
+        droite = Canv.find_all()[-1]  # recupere le trait en cours de tracé
         Canv.coords(droite, *points, X, Y)
 
     points.append(X)
@@ -43,6 +46,8 @@ def ctrl_click(event, points):
 
 
 def release_key(event, points):
+    """reset le tableau des coordonnée
+    car le tracé c'est terminé"""
     while len(points) > 0:
         points.remove(points[0])
     print("test")
@@ -73,6 +78,7 @@ def placement_tk(Label, Canv):
 
 
 def Canv_call(Canv):
+    """associe tous les callbacks au canvas de base"""
     points = []
     Canv.bind("<Control-B1-Motion>",
               lambda event: ctrl_click(event, points))
