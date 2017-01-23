@@ -50,7 +50,6 @@ def release_key(event, points):
     car le tracé c'est terminé"""
     while len(points) > 0:
         points.remove(points[0])
-    print("test")
 
 
 def menu_nouveau():
@@ -85,31 +84,31 @@ def initialisation_tk():
     Vstr = tk.StringVar()
     Label = tk.Label(Root, textvariable=Vstr)
     Vstr.set("test")
-    MenuBar = tk.Menu(Root)
-    MenuFichier = tk.Menu(MenuBar, tearoff=0)
-    BoutonAide = tk.Menubutton(MenuBar)
-    return(Root, Canv, Label, MenuBar, MenuFichier, Vstr, BoutonAide)
+    MenuBar = tk.Menubutton(Root, text="Fichier")
+    BoutonAide = tk.Button(MenuBar)
+    return(Root, Canv, Label, MenuBar, Vstr, BoutonAide)
 
 
-def configuration_tk(Root, MenuBar, MenuFichier, BoutonAide):
+def configuration_tk(Root, MenuBar, BoutonAide):
     """modifie les widgets"""
     BoutonAide.config(text="Aide", command=ouvrir_commande)
-    Root.config(menu=MenuBar)
-
-    MenuFichier.add_command(label="Nouveau",
-                            command=menu_nouveau)
-    MenuFichier.add_command(label="Ouvrir",
-                            command=menu_ouvrir)
-    MenuFichier.add_command(label="Sauver",
-                            command=menu_sauver)
-    MenuFichier.add_command(label="Quitter",
-                            command=menu_quitter)
-    MenuBar.add_cascade(label="Fichier", menu=MenuFichier)
+    MenuBar.menu = tk.Menu(MenuBar, tearoff=0)
+    MenuBar["menu"] = MenuBar.menu
+    MenuBar["anchor"] = "w"
+    MenuBar.menu.add_command(label="Nouveau",
+                             command=menu_nouveau)
+    MenuBar.menu.add_command(label="Ouvrir",
+                             command=menu_ouvrir)
+    MenuBar.menu.add_command(label="Sauver",
+                             command=menu_sauver)
+    MenuBar.menu.add_command(label="Quitter",
+                             command=menu_quitter)
 
 
 def placement_tk(Label, Canv, BoutonAide):
     """place les widgets sur le canv"""
-    BoutonAide.pack(anchor="ne")
+    MenuBar.pack(side="top", anchor="nw", fill=tk.X)
+    BoutonAide.pack(side="top", anchor="ne")
     Label.pack(side="bottom", fill=tk.X)
     Canv.pack()
 
@@ -125,10 +124,9 @@ def Canv_call(Canv):
 
 
 if __name__ == "__main__":
-    (Root, Canv, Label, MenuBar,
-     MenuFichier, Vstr, BoutonAide) = initialisation_tk()
+    (Root, Canv, Label, MenuBar, Vstr, BoutonAide) = initialisation_tk()
 
-    configuration_tk(Root, MenuBar, MenuFichier, BoutonAide)
+    configuration_tk(Root, MenuBar, BoutonAide)
     placement_tk(Label, Canv, BoutonAide)
     Canv_call(Canv)
     Root.mainloop()
