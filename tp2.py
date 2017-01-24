@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.filedialog as tk_filedialog
 
 
 def couleur_surligne(event):
@@ -28,12 +29,18 @@ def update_label(event):
 
 
 def clean_canv(Canv):
+    """fonction qui permet de liberer le canvas"""
     for line in Canv.find_all():
         Canv.delete(line)
 
 
 def libere_sauv(MenuBar):
+    """focntion qui degrisse le bouton sauver"""
     MenuBar.menu.entryconfig("Sauver", state="normal")
+
+
+def ferme_fen(fen):
+    fen.destroy()
 
 
 def ctrl_click(event, points, MenuBar):
@@ -71,31 +78,54 @@ def menu_nouveau(Canv):
 
 def menu_ouvrir(Canv, MenuBar):
     """Fonction associée au boutton ouvrir du menu"""
-    Fichier = open("sav", "r")
-    clean_canv(Canv)
-    for lines in Fichier:
-        coords = lines.split()
-        droite = Canv.create_line(*coords)
-        Canv.tag_bind(droite, "<Enter>", couleur_surligne)
-        Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
-        libere_sauv(MenuBar)
-    Fichier.close()
+    nomFichier = tk_filedialog.askopenfilename(defaultextension=".jcl",
+                                               filetypes=[("JCL", "*.jcl")],
+                                               parent=Root,
+                                               title="ouvrir une sauvegarde")
+    if nomFichier:
+        Fichier = open(nomFichier, "r")
+        clean_canv(Canv)
+        for lines in Fichier:
+            coords = lines.split()
+            droite = Canv.create_line(*coords)
+            Canv.tag_bind(droite, "<Enter>", couleur_surligne)
+            Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
+            libere_sauv(MenuBar)
+        Fichier.close()
 
 
 def menu_sauver(Canv):
     """Fonction associée au boutton sauver du menu"""
-    Fichier = open("sav", "w")
-    for droite in Canv.find_all():
-        coordon = Canv.coords(droite)
-        for point in coordon:
-            Fichier.write(str(point)+" ")
-        Fichier.write("\n")
-    Fichier.close()
+    nomFichier = tk_filedialog.asksaveasfilename(defaultextension=".jcl",
+                                                 filetypes=[("JCL", "*.jcl")],
+                                                 parent=Root,
+                                                 title="creer une sauvegarde")
+    if nomFichier:
+        Fichier = open(nomFichier, "w")
+        for droite in Canv.find_all():
+            coordon = Canv.coords(droite)
+            for point in coordon:
+                Fichier.write(str(point)+" ")
+            Fichier.write("\n")
+        Fichier.close()
 
 
-def menu_quitter():
+def menu_quitter(Root, canv):
     """Fonction associée au boutton quitter du menu"""
-    pass
+    if len(Canv.find_all()) > 0:
+        TopLevel1 = tk.Toplevel(Root)
+        Lab_quit = tk.Label(TopLevel1, text="Voulez vous vraiment quittez ?")
+        Frame = tk.Frame(TopLevel1)
+        BoutonY = tk.Button(Frame, text="oui", command=lambda: ferme_fen(Root))
+        BoutonN = tk.Button(Frame, text="Annuler",
+                            command=lambda: ferme_fen(TopLevel1))
+        Lab_quit.pack(side="top")
+        Frame.pack(side="bottom")
+        BoutonN.pack(side="left")
+        BoutonY.pack(side="left")
+        TopLevel1.grab_set()
+    else:
+        ferme_fen(Root)
 
 
 def ouvrir_aide():
@@ -128,7 +158,7 @@ def configuration_tk(Root, MenuBar, BoutonAide, Canv):
     MenuBar.menu.add_command(label="Sauver", state=tk.DISABLED,
                              command=lambda: menu_sauver(Canv))
     MenuBar.menu.add_command(label="Quitter",
-                             command=menu_quitter)
+                             command=lambda: menu_quitter(Root, Canv))
 
 
 def placement_tk(Label, Canv, BoutonAide):
