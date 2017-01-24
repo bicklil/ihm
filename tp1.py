@@ -135,7 +135,7 @@ def recuperation_arg():
         print(err)
         print("essayez avec -h pour plus d'informations")
         sys.exit(2)
-
+    # valeur par defaut
     Ecart = 2
     colonne = 18
     Ligne = 10

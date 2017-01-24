@@ -21,7 +21,7 @@ def couleur_desurligne(event):
 
 
 def update_label(event):
-    """modifie le label au click sue le trait"""
+    """modifie le label au click sur le trait"""
     Canv = event.widget
     droite = Canv.find_withtag("current")[0]
     Vstr.set(droite)
@@ -43,6 +43,8 @@ def ctrl_click(event, points):
 
     points.append(X)
     points.append(Y)
+    Canv.tag_bind(droite, "<Enter>", couleur_surligne)
+    Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
 
 
 def release_key(event, points):
@@ -57,14 +59,26 @@ def menu_nouveau():
     pass
 
 
-def menu_ouvrir():
+def menu_ouvrir(Canv):
     """Fonction associée au boutton ouvrir du menu"""
-    pass
+    Fichier = open("sav", "r")
+    for lines in Fichier:
+        coords = lines.split()
+        droite = Canv.create_line(*coords)
+        Canv.tag_bind(droite, "<Enter>", couleur_surligne)
+        Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
+    Fichier.close()
 
 
-def menu_sauver():
+def menu_sauver(Canv):
     """Fonction associée au boutton sauver du menu"""
-    pass
+    Fichier = open("sav", "w")
+    for droite in Canv.find_all():
+        coordon = Canv.coords(droite)
+        for point in coordon:
+            Fichier.write(str(point)+" ")
+        Fichier.write("\n")
+    Fichier.close()
 
 
 def menu_quitter():
@@ -89,7 +103,7 @@ def initialisation_tk():
     return(Root, Canv, Label, MenuBar, Vstr, BoutonAide)
 
 
-def configuration_tk(Root, MenuBar, BoutonAide):
+def configuration_tk(Root, MenuBar, BoutonAide, Canv):
     """modifie les widgets"""
     BoutonAide.config(text="Aide", command=ouvrir_commande)
     MenuBar.menu = tk.Menu(MenuBar, tearoff=0)
@@ -98,9 +112,9 @@ def configuration_tk(Root, MenuBar, BoutonAide):
     MenuBar.menu.add_command(label="Nouveau",
                              command=menu_nouveau)
     MenuBar.menu.add_command(label="Ouvrir",
-                             command=menu_ouvrir)
-    MenuBar.menu.add_command(label="Sauver",
-                             command=menu_sauver)
+                             command=lambda: menu_ouvrir(Canv))
+    MenuBar.menu.add_command(label="Sauver", state=tk.DISABLED, 
+                             command=lambda: menu_sauver(Canv))
     MenuBar.menu.add_command(label="Quitter",
                              command=menu_quitter)
 
@@ -126,7 +140,7 @@ def Canv_call(Canv):
 if __name__ == "__main__":
     (Root, Canv, Label, MenuBar, Vstr, BoutonAide) = initialisation_tk()
 
-    configuration_tk(Root, MenuBar, BoutonAide)
+    configuration_tk(Root, MenuBar, BoutonAide, Canv)
     placement_tk(Label, Canv, BoutonAide)
     Canv_call(Canv)
     Root.mainloop()
