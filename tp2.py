@@ -140,14 +140,16 @@ def initialisation_tk():
     Vstr = tk.StringVar()
     Label = tk.Label(Root, textvariable=Vstr)
     Vstr.set("test")
-    MenuBar = tk.Menubutton(Root, text="Fichier")
-    BoutonAide = tk.Button(MenuBar)
-    return(Root, Canv, Label, MenuBar, Vstr, BoutonAide)
+    Frame = tk.Frame(Root)
+    MenuBar = tk.Menubutton(Frame, text="Fichier")
+    BoutonAide = tk.Button(Frame)
+    return(Root, Canv, Label, MenuBar, Vstr, BoutonAide, Frame)
 
 
-def configuration_tk(Root, MenuBar, BoutonAide, Canv):
+def configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame):
     """modifie les widgets"""
-    BoutonAide.config(text="Aide", command=ouvrir_aide)
+    Frame.config(borderwidth=1, relief=tk.RAISED)
+    BoutonAide.config(text="Aide", borderwidth=0, command=ouvrir_aide)
     MenuBar.menu = tk.Menu(MenuBar, tearoff=0)
     MenuBar["menu"] = MenuBar.menu
     MenuBar["anchor"] = "w"
@@ -161,10 +163,11 @@ def configuration_tk(Root, MenuBar, BoutonAide, Canv):
                              command=lambda: menu_quitter(Root, Canv))
 
 
-def placement_tk(Label, Canv, BoutonAide):
+def placement_tk(Label, Canv, BoutonAide, Frame):
     """place les widgets sur le canv"""
-    MenuBar.pack(side="top", anchor="nw", fill=tk.X)
-    BoutonAide.pack(side="top", anchor="ne")
+    Frame.pack(side="top", fill=tk.X)
+    MenuBar.pack(side="left")
+    BoutonAide.pack(side="right")
     Label.pack(side="bottom", fill=tk.X)
     Canv.pack()
 
@@ -180,9 +183,9 @@ def Canv_call(Canv, MenuBar):
 
 
 if __name__ == "__main__":
-    (Root, Canv, Label, MenuBar, Vstr, BoutonAide) = initialisation_tk()
+    (Root, Canv, Label, MenuBar, Vstr, BoutonAide, Frame) = initialisation_tk()
 
-    configuration_tk(Root, MenuBar, BoutonAide, Canv)
-    placement_tk(Label, Canv, BoutonAide)
+    configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame)
+    placement_tk(Label, Canv, BoutonAide, Frame)
     Canv_call(Canv, MenuBar)
     Root.mainloop()
