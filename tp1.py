@@ -65,6 +65,29 @@ def ouvrir_fichier(file):
         exit()
 
 
+def resize_fen(event, NbLigne, NbLigne_a_afficher, NbColonne, ecart):
+    largeur = event.width
+    hauteur = event.height
+    Canv = event.widget
+    Canv["height"] = hauteur
+    Canv["width"] = largeur
+    larg_rect = (largeur-(ecart*(NbColonne+1)))/NbColonne
+    haut_rect = (hauteur-28-(ecart*(NbLigne_a_afficher+1)))/NbLigne_a_afficher
+    Canv["scrollregion"] = (0, 0, 0, Ecart+NbLigne * (haut_rect+Ecart))
+    indice_ligne = -1
+    i = 0
+    for rect in Canv.find_all():
+        if i == 0:
+            indice_ligne += 1
+        x1 = i*larg_rect + Ecart + i*Ecart
+        y1 = Ecart+haut_rect*indice_ligne + Ecart * indice_ligne
+        x2 = (i+1)*larg_rect + (i+1)*Ecart
+        y2 = haut_rect*(indice_ligne+1) + Ecart * (indice_ligne+1)
+        Canv.coords(rect, x1, y1, x2, y2)
+        i += 1
+        i = i % NbColonne
+
+
 def parser_rgb(file_open):
     """ recupere a partir du file descriptor toutes les couleurs
     enleve les doublons
@@ -199,6 +222,10 @@ def tk_init(Ecart, NbColonne, NbLigne, NbLigne_a_afficher, CoteCarre):
     """cree toute les instances de widget necessaire"""
     Root = tk.Tk()
     TopLevel1 = tk.Toplevel(Root)
+    TopLevel1.minsize(width=Ecart+NbColonne * (10+Ecart)+16,
+                      height=Ecart+NbLigne_a_afficher * (10+Ecart)+28)
+    TopLevel1.maxsize(width=Ecart+NbColonne * (30+Ecart)+16,
+                      height=Ecart+NbLigne_a_afficher * (30+Ecart)+28)
     Var = tk.StringVar()
     Var.set("NULL")
     Canv = tk.Canvas(TopLevel1, width=Ecart+NbColonne * (CoteCarre+Ecart),
@@ -231,13 +258,17 @@ def config_widget(Scroll, Canv, Boutton, Lab, TopLevel1, Var):
     lie la molette au scroll"""
     Scroll.config(command=Canv.yview)
     Canv.config(yscrollcommand=Scroll.set)
+    Tl_width = TopLevel1.winfo_width()
+    Tl_height = TopLevel1.winfo_height()
+    size = [Tl_width, Tl_height]
     Boutton["Ok"].config(command=lambda: click_ok(Lab, Var, TopLevel1))
     Boutton["Annuler"].config(command=lambda: click_annuler(TopLevel1))
     Canv.bind("<Button-4>", mouse_wheel)
     Canv.bind("<Button-5>", mouse_wheel)
 
 
-def creation_carre(DicoColor, CoteCarre, Ecart, Lab, NbColonne):
+def creation_carre(DicoColor, CoteCarre, Ecart, Lab,
+                   NbColonne, NbLigne_a_afficher, TopLevel1):
     """mise en place des couleurs dans des rectangles
     chaque rectangle a comme tag le nom de la couleur et le tag "couleur"
     association des events avec les tags"""
@@ -270,6 +301,10 @@ def creation_carre(DicoColor, CoteCarre, Ecart, Lab, NbColonne):
         Canv.tag_bind(Color, "<Leave>", couleur_desurligne)
         i += 1
         i = i % NbColonne
+    TopLevel1.update()
+    Canv.bind("<Configure>", lambda event: resize_fen(event, NbLigne,
+                                                      NbLigne_a_afficher,
+                                                      NbColonne, Ecart))
 
 
 if __name__ == "__main__":
@@ -283,7 +318,8 @@ if __name__ == "__main__":
     tk_placement_topLevel(Lab, Scroll, Canv, Fram, Boutton)
     config_widget(Scroll, Canv, Boutton, Lab, TopLevel1, Var)
 
-    creation_carre(DicoColor, CoteCarre, Ecart, Lab, NbColonne)
+    creation_carre(DicoColor, CoteCarre, Ecart, Lab,
+                   NbColonne, NbLigne_a_afficher, TopLevel1)
 
     TopLevel1.grab_set()
     TopLevel1.focus_set()

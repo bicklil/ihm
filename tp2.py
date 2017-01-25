@@ -40,6 +40,7 @@ def libere_sauv(MenuBar):
 
 
 def ferme_fen(fen):
+    """ferme la fenetre en parametre"""
     fen.destroy()
 
 
