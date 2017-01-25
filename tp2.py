@@ -114,7 +114,7 @@ def menu_quitter(Root, canv):
     """Fonction associée au boutton quitter du menu"""
     if len(Canv.find_all()) > 0:
         TopLevel1 = tk.Toplevel(Root)
-        Lab_quit = tk.Label(TopLevel1, text="Voulez vous vraiment quittez ?")
+        Lab_quit = tk.Label(TopLevel1, text="Voulez-vous vraiment quitter ?")
         Frame = tk.Frame(TopLevel1)
         BoutonY = tk.Button(Frame, text="oui", command=lambda: ferme_fen(Root))
         BoutonN = tk.Button(Frame, text="Annuler",
@@ -138,7 +138,7 @@ def initialisation_tk():
     Root = tk.Tk()
     Canv = tk.Canvas(Root)
     Vstr = tk.StringVar()
-    Label = tk.Label(Root, textvariable=Vstr)
+    Label = tk.Label(Root, textvariable=Vstr, bg="sky blue")
     Vstr.set("test")
     Frame = tk.Frame(Root)
     MenuBar = tk.Menubutton(Frame, text="Fichier")
@@ -149,6 +149,7 @@ def initialisation_tk():
 def configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame):
     """modifie les widgets"""
     Frame.config(borderwidth=1, relief=tk.RAISED)
+    Canv.config(bg="white")
     BoutonAide.config(text="Aide", borderwidth=0, command=ouvrir_aide)
     MenuBar.menu = tk.Menu(MenuBar, tearoff=0)
     MenuBar["menu"] = MenuBar.menu
