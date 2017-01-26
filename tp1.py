@@ -71,7 +71,6 @@ def resize_fen(event, NbLigne, NbLigne_affiche, NbColonne, ecart, Canv):
     hauteur = event.height
     if hauteur > 149:
         TopLevel1.unbind("<Configure>")
-        print(hauteur)
         Canv["height"] = hauteur - 50
         Canv["width"] = largeur
         larg_rect = (largeur-16-(ecart*(NbColonne+1)))/NbColonne
@@ -218,9 +217,6 @@ def init_variable():
     TabColor = color_alpha(DicoColor)
     NbColor = len(TabColor)
     NbLigne = (NbColor)/NbColonne
-
-    if NbColor % NbColonne != 0:
-        NbLigne += 1
 
     return (DicoColor, NbColonne, NbLigne,
             NbLigne_a_afficher, CoteCarre, Ecart)
