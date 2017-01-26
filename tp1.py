@@ -65,27 +65,35 @@ def ouvrir_fichier(file):
         exit()
 
 
-def resize_fen(event, NbLigne, NbLigne_a_afficher, NbColonne, ecart, TopLevel):
+def resize_fen(event, NbLigne, NbLigne_affiche, NbColonne, ecart, Canv):
+    TopLevel1 = event.widget
     largeur = event.width
     hauteur = event.height
-    Canv = event.widget
-    Canv["height"] = hauteur
-    Canv["width"] = largeur
-    larg_rect = (largeur-(ecart*(NbColonne+1)))/NbColonne
-    haut_rect = (hauteur-(ecart*(NbLigne_a_afficher+1)))/NbLigne_a_afficher
-    Canv["scrollregion"] = (0, 0, 0, Ecart+NbLigne * (haut_rect+Ecart))
-    indice_ligne = -1
-    i = 0
-    for rect in Canv.find_all():
-        if i == 0:
-            indice_ligne += 1
-        x1 = i*larg_rect + Ecart + i*Ecart
-        y1 = Ecart+haut_rect*indice_ligne + Ecart * indice_ligne
-        x2 = (i+1)*larg_rect + (i+1)*Ecart
-        y2 = haut_rect*(indice_ligne+1) + Ecart * (indice_ligne+1)
-        Canv.coords(rect, x1, y1, x2, y2)
-        i += 1
-        i = i % NbColonne
+    if hauteur > 149:
+        TopLevel1.unbind("<Configure>")
+        print(hauteur)
+        Canv["height"] = hauteur - 50
+        Canv["width"] = largeur
+        larg_rect = (largeur-16-(ecart*(NbColonne+1)))/NbColonne
+        haut_rect = (hauteur-50-(ecart*(NbLigne_affiche+1)))/NbLigne_affiche
+        Canv["scrollregion"] = (0, 0, 0, Ecart+NbLigne * (haut_rect+Ecart))
+        indice_ligne = -1
+        i = 0
+        for rect in Canv.find_all():
+            if i == 0:
+                indice_ligne += 1
+            x1 = i*larg_rect + Ecart + i*Ecart
+            y1 = Ecart+haut_rect*indice_ligne + Ecart * indice_ligne
+            x2 = (i+1)*larg_rect + (i+1)*Ecart
+            y2 = haut_rect*(indice_ligne+1) + Ecart * (indice_ligne+1)
+            Canv.coords(rect, x1, y1, x2, y2)
+            i += 1
+            i = i % NbColonne
+        TopLevel1.update()
+        TopLevel1.bind("<Configure>",
+                       lambda event: resize_fen(event, NbLigne,
+                                                NbLigne_affiche,
+                                                NbColonne, Ecart, Canv))
 
 
 def parser_rgb(file_open):
@@ -302,9 +310,10 @@ def creation_carre(DicoColor, CoteCarre, Ecart, Lab,
         i += 1
         i = i % NbColonne
     TopLevel1.update()
-    Canv.bind("<Configure>", lambda event: resize_fen(event, NbLigne,
-                                                      NbLigne_a_afficher,
-                                                      NbColonne, Ecart, TopLevel1))
+    TopLevel1.bind("<Configure>", lambda event: resize_fen(event, NbLigne,
+                                                           NbLigne_a_afficher,
+                                                           NbColonne, Ecart,
+                                                           Canv))
 
 
 if __name__ == "__main__":

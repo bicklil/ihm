@@ -45,7 +45,7 @@ def ferme_fen(fen):
 
 def bouge_droite(event, points):
     """ bouge la courbe si on a click sur la courbe"""
-    if len(points) == 0:
+    if len(points) == 0:  # debug un peu mais fait pas le cafe
         Canv = event.widget
         ligne = Canv.find_withtag("current")[0]
         x1 = Canv.coords(ligne)[0]
@@ -69,7 +69,8 @@ def ctrl_click(event, points, MenuBar):
         Canv.tag_bind(droite, "<Enter>", couleur_surligne)
         Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
         Canv.tag_bind(droite, "<Button-1>", update_label)
-        Canv.tag_bind(droite, "<B1-Motion>", lambda event: bouge_droite(event,points))
+        Canv.tag_bind(droite, "<B1-Motion>",
+                      lambda event: bouge_droite(event, points))
     else:
         points.append(X)
         points.append(Y)
