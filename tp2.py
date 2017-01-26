@@ -43,15 +43,16 @@ def ferme_fen(fen):
     fen.destroy()
 
 
-def bouge_droite(event):
+def bouge_droite(event, points):
     """ bouge la courbe si on a click sur la courbe"""
-    Canv = event.widget
-    ligne = Canv.find_withtag("current")[0]
-    x1 = Canv.coords(ligne)[0]
-    y1 = Canv.coords(ligne)[1]
-    X = - x1 + event.x
-    Y = - y1 + event.y
-    Canv.move(ligne, X, Y)
+    if len(points) == 0:
+        Canv = event.widget
+        ligne = Canv.find_withtag("current")[0]
+        x1 = Canv.coords(ligne)[0]
+        y1 = Canv.coords(ligne)[1]
+        X = - x1 + event.x
+        Y = - y1 + event.y
+        Canv.move(ligne, X, Y)
 
 
 def ctrl_click(event, points, MenuBar):
@@ -68,7 +69,7 @@ def ctrl_click(event, points, MenuBar):
         Canv.tag_bind(droite, "<Enter>", couleur_surligne)
         Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
         Canv.tag_bind(droite, "<Button-1>", update_label)
-        Canv.tag_bind(droite, "<B1-Motion>", bouge_droite)
+        Canv.tag_bind(droite, "<B1-Motion>", lambda event: bouge_droite(event,points))
     else:
         points.append(X)
         points.append(Y)
