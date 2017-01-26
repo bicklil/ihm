@@ -65,14 +65,14 @@ def ouvrir_fichier(file):
         exit()
 
 
-def resize_fen(event, NbLigne, NbLigne_a_afficher, NbColonne, ecart):
+def resize_fen(event, NbLigne, NbLigne_a_afficher, NbColonne, ecart, TopLevel):
     largeur = event.width
     hauteur = event.height
     Canv = event.widget
     Canv["height"] = hauteur
     Canv["width"] = largeur
     larg_rect = (largeur-(ecart*(NbColonne+1)))/NbColonne
-    haut_rect = (hauteur-28-(ecart*(NbLigne_a_afficher+1)))/NbLigne_a_afficher
+    haut_rect = (hauteur-(ecart*(NbLigne_a_afficher+1)))/NbLigne_a_afficher
     Canv["scrollregion"] = (0, 0, 0, Ecart+NbLigne * (haut_rect+Ecart))
     indice_ligne = -1
     i = 0
@@ -246,8 +246,8 @@ def tk_placement_topLevel(Lab, Scroll, Canv, Fram, Boutton):
     """place les widget sur la TopLevel"""
     Lab.pack(side="top")
     Scroll.pack(side="right", fill=tk.Y)
-    Canv.pack()
-    Fram.pack(side="bottom")
+    Canv.pack(side="top")
+    Fram.pack(side="top", expand=True)
     Boutton["Ok"].pack(side="left")
     Boutton["Annuler"].pack(side="left")
 
@@ -304,7 +304,7 @@ def creation_carre(DicoColor, CoteCarre, Ecart, Lab,
     TopLevel1.update()
     Canv.bind("<Configure>", lambda event: resize_fen(event, NbLigne,
                                                       NbLigne_a_afficher,
-                                                      NbColonne, Ecart))
+                                                      NbColonne, Ecart, TopLevel1))
 
 
 if __name__ == "__main__":

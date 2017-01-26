@@ -16,7 +16,6 @@ def couleur_desurligne(event):
     la souris s'ecarte du trait"""
     Canv = event.widget
     droite = Canv.find_withtag("current")[0]
-    Canv.tag_bind(droite, "<Button-1>", update_label)
     Canv.itemconfig(droite, fill="black")
     Canv.itemconfig(droite, width=1)
 
@@ -44,6 +43,17 @@ def ferme_fen(fen):
     fen.destroy()
 
 
+def bouge_droite(event):
+    """ bouge la courbe si on a click sur la courbe"""
+    Canv = event.widget
+    ligne = Canv.find_withtag("current")[0]
+    x1 = Canv.coords(ligne)[0]
+    y1 = Canv.coords(ligne)[1]
+    X = - x1 + event.x
+    Y = - y1 + event.y
+    Canv.move(ligne, X, Y)
+
+
 def ctrl_click(event, points, MenuBar):
     """ajoute un point a droite en cours de creation
     si on a pas de trait en cours on en cree un"""
@@ -52,17 +62,18 @@ def ctrl_click(event, points, MenuBar):
     Y = event.y
     if len(points) == 0:  # pas de trait en cours
         droite = Canv.create_line(X, Y, X, Y)
+        points.append(X)
+        points.append(Y)
         libere_sauv(MenuBar)
         Canv.tag_bind(droite, "<Enter>", couleur_surligne)
         Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
+        Canv.tag_bind(droite, "<Button-1>", update_label)
+        Canv.tag_bind(droite, "<B1-Motion>", bouge_droite)
     else:
+        points.append(X)
+        points.append(Y)
         droite = Canv.find_all()[-1]  # recupere le trait en cours de tracé
-        Canv.coords(droite, *points, X, Y)
-
-    points.append(X)
-    points.append(Y)
-    Canv.tag_bind(droite, "<Enter>", couleur_surligne)
-    Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
+        Canv.coords(droite, *points)
 
 
 def release_key(event, points):
