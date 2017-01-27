@@ -69,7 +69,7 @@ def resize_fen(event, NbLigne, NbLigne_affiche, NbColonne, ecart, Canv):
     TopLevel1 = event.widget
     largeur = event.width
     hauteur = event.height
-    if hauteur > 149:
+    if hauteur > 50:
         TopLevel1.unbind("<Configure>")
         Canv["height"] = hauteur - 50
         Canv["width"] = largeur
@@ -226,10 +226,10 @@ def tk_init(Ecart, NbColonne, NbLigne, NbLigne_a_afficher, CoteCarre):
     """cree toute les instances de widget necessaire"""
     Root = tk.Tk()
     TopLevel1 = tk.Toplevel(Root)
-    TopLevel1.minsize(width=Ecart+NbColonne * (10+Ecart)+16,
-                      height=Ecart+NbLigne_a_afficher * (10+Ecart)+28)
-    TopLevel1.maxsize(width=Ecart+NbColonne * (30+Ecart)+16,
-                      height=Ecart+NbLigne_a_afficher * (30+Ecart)+28)
+    TopLevel1.minsize(width=Ecart+NbColonne * (5+Ecart)+16,
+                      height=Ecart+NbLigne_a_afficher * (5+Ecart)+28)
+    """TopLevel1.maxsize(width=Ecart+NbColonne * (30+Ecart)+16,
+                      height=Ecart+NbLigne_a_afficher * (30+Ecart)+28)"""
     Var = tk.StringVar()
     Var.set("NULL")
     Canv = tk.Canvas(TopLevel1, width=Ecart+NbColonne * (CoteCarre+Ecart),
