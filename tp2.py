@@ -7,6 +7,7 @@ def couleur_surligne(event):
     au survol de la souris """
     Canv = event.widget
     droite = Canv.find_withtag("current")[0]
+    Vstr.set(droite)
     Canv.itemconfig(droite, fill="red")
     Canv.itemconfig(droite, width=1.5)
 
@@ -16,6 +17,7 @@ def couleur_desurligne(event):
     la souris s'ecarte du trait"""
     Canv = event.widget
     droite = Canv.find_withtag("current")[0]
+    Vstr.set("NULL")
     Canv.itemconfig(droite, fill="black")
     Canv.itemconfig(droite, width=1)
 
@@ -24,7 +26,7 @@ def update_label(event):
     """modifie le label au click sur le trait"""
     Canv = event.widget
     droite = Canv.find_withtag("current")[0]
-    Vstr.set(droite)
+
 
 
 def clean_canv(Canv):
@@ -68,7 +70,6 @@ def ctrl_click(event, points, MenuBar):
         libere_sauv(MenuBar)
         Canv.tag_bind(droite, "<Enter>", couleur_surligne)
         Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
-        Canv.tag_bind(droite, "<Button-1>", update_label)
         Canv.tag_bind(droite, "<B1-Motion>",
                       lambda event: bouge_droite(event, points))
     else:
@@ -81,13 +82,17 @@ def ctrl_click(event, points, MenuBar):
 def release_key(event, points):
     """reset le tableau des coordonnée
     car le tracé c'est terminé"""
+    print("test")
     while len(points) > 0:
         points.remove(points[0])
 
 
-def menu_nouveau(Canv):
+def menu_nouveau(Canv, MenuBar):
     """Fonction associée au boutton nouveau du menu"""
     clean_canv(Canv)
+    MenuBar.menu.entryconfig("Sauver", state=tk.DISABLED)
+
+
 
 
 def menu_ouvrir(Canv, MenuBar):
@@ -97,6 +102,7 @@ def menu_ouvrir(Canv, MenuBar):
                                                parent=Root,
                                                title="ouvrir une sauvegarde")
     if nomFichier:
+        Vstr.set(nomFichier)
         Fichier = open(nomFichier, "r")
         clean_canv(Canv)
         for lines in Fichier:
@@ -162,6 +168,7 @@ def initialisation_tk():
 
 def configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame):
     """modifie les widgets"""
+    Root.geometry('800x500')
     Frame.config(borderwidth=1, relief=tk.RAISED)
     Canv.config(bg="white")
     BoutonAide.config(text="Aide", borderwidth=0, command=ouvrir_aide)
@@ -169,7 +176,7 @@ def configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame):
     MenuBar["menu"] = MenuBar.menu
     MenuBar["anchor"] = "w"
     MenuBar.menu.add_command(label="Nouveau",
-                             command=lambda: menu_nouveau(Canv))
+                             command=lambda: menu_nouveau(Canv, MenuBar))
     MenuBar.menu.add_command(label="Ouvrir",
                              command=lambda: menu_ouvrir(Canv, MenuBar))
     MenuBar.menu.add_command(label="Sauver", state=tk.DISABLED,
@@ -184,7 +191,7 @@ def placement_tk(Label, Canv, BoutonAide, Frame):
     MenuBar.pack(side="left")
     BoutonAide.pack(side="right")
     Label.pack(side="bottom", fill=tk.X)
-    Canv.pack()
+    Canv.pack(fill=tk.BOTH)
 
 
 def Canv_call(Canv, MenuBar):
@@ -193,8 +200,8 @@ def Canv_call(Canv, MenuBar):
     Canv.bind("<Control-B1-Motion>",
               lambda event: ctrl_click(event, points, MenuBar))
     Canv.bind("<ButtonRelease-1>", lambda event: release_key(event, points))
-    Canv.bind("<KeyRelease-Control_L>", release_key)  # marche pas
-    Canv.bind("<KeyRelease-Control_R>", release_key)  # marche pas
+    Canv.bind_all("<KeyRelease-Control_L>", lambda event: release_key(event, points), add="+")
+    Canv.bind_all("<KeyRelease-Control_R>", lambda event: release_key(event, points), add="+")
 
 
 if __name__ == "__main__":
