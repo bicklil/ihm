@@ -28,7 +28,6 @@ def update_label(event):
     droite = Canv.find_withtag("current")[0]
 
 
-
 def clean_canv(Canv):
     """fonction qui permet de liberer le canvas"""
     for line in Canv.find_all():
@@ -50,11 +49,23 @@ def bouge_droite(event, points):
     if len(points) == 0:  # debug un peu mais fait pas le cafe
         Canv = event.widget
         ligne = Canv.find_withtag("current")[0]
-        x1 = Canv.coords(ligne)[0]
-        y1 = Canv.coords(ligne)[1]
+        x1 = Canv.coords(ligne)[xint.get()]
+        y1 = Canv.coords(ligne)[xint.get()+1]
         X = - x1 + event.x
         Y = - y1 + event.y
         Canv.move(ligne, X, Y)
+
+
+def click(event):
+    canv = event.widget
+    ligne = Canv.find_withtag("current")[0]
+    points = canv.coords(ligne)
+    for i in range(0, len(points), 2):
+        if points[i]-4 <= event.x <= points[i]+4:
+            if points[i+1]-4 <=event.y <= points[i+1]+4:
+                xint.set(i)
+                print(i)
+                break
 
 
 def ctrl_click(event, points, MenuBar):
@@ -70,6 +81,7 @@ def ctrl_click(event, points, MenuBar):
         libere_sauv(MenuBar)
         Canv.tag_bind(droite, "<Enter>", couleur_surligne)
         Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
+        Canv.tag_bind(droite, "<Button-1>", click)
         Canv.tag_bind(droite, "<B1-Motion>",
                       lambda event: bouge_droite(event, points))
     else:
@@ -82,7 +94,6 @@ def ctrl_click(event, points, MenuBar):
 def release_key(event, points):
     """reset le tableau des coordonnée
     car le tracé c'est terminé"""
-    print("test")
     while len(points) > 0:
         points.remove(points[0])
 
@@ -91,8 +102,6 @@ def menu_nouveau(Canv, MenuBar):
     """Fonction associée au boutton nouveau du menu"""
     clean_canv(Canv)
     MenuBar.menu.entryconfig("Sauver", state=tk.DISABLED)
-
-
 
 
 def menu_ouvrir(Canv, MenuBar):
@@ -158,12 +167,14 @@ def initialisation_tk():
     Root = tk.Tk()
     Canv = tk.Canvas(Root)
     Vstr = tk.StringVar()
+    xint = tk.IntVar()
     Label = tk.Label(Root, textvariable=Vstr, bg="sky blue")
     Vstr.set("test")
+    xint.set(0)
     Frame = tk.Frame(Root)
     MenuBar = tk.Menubutton(Frame, text="Fichier")
     BoutonAide = tk.Button(Frame)
-    return(Root, Canv, Label, MenuBar, Vstr, BoutonAide, Frame)
+    return(Root, Canv, Label, MenuBar, Vstr, xint, BoutonAide, Frame)
 
 
 def configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame):
@@ -205,7 +216,7 @@ def Canv_call(Canv, MenuBar):
 
 
 if __name__ == "__main__":
-    (Root, Canv, Label, MenuBar, Vstr, BoutonAide, Frame) = initialisation_tk()
+    (Root, Canv, Label, MenuBar, Vstr, xint, BoutonAide, Frame) = initialisation_tk()
 
     configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame)
     placement_tk(Label, Canv, BoutonAide, Frame)
