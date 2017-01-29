@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.filedialog as tk_filedialog
+import tkinter.messagebox as tk_msgbox
 
 
 def couleur_surligne(event):
@@ -39,14 +40,9 @@ def libere_sauv(MenuBar):
     MenuBar.menu.entryconfig("Sauver", state="normal")
 
 
-def ferme_fen(fen):
-    """ferme la fenetre en parametre"""
-    fen.destroy()
-
-
 def bouge_droite(event, points):
     """ bouge la courbe si on a click sur la courbe"""
-    if len(points) == 0 and xint.get() != 0:  # debug un peu mais fait pas le cafe
+    if len(points) == 0 and xint.get() != 0:
         Canv = event.widget
         ligne = Canv.find_withtag("current")[0]
         x1 = Canv.coords(ligne)[xint.get()]
@@ -144,19 +140,12 @@ def menu_sauver(Canv):
 def menu_quitter(Root, canv):
     """Fonction associée au boutton quitter du menu"""
     if len(Canv.find_all()) > 0:
-        TopLevel1 = tk.Toplevel(Root)
-        Lab_quit = tk.Label(TopLevel1, text="Voulez-vous vraiment quitter ?")
-        Frame = tk.Frame(TopLevel1)
-        BoutonY = tk.Button(Frame, text="oui", command=lambda: ferme_fen(Root))
-        BoutonN = tk.Button(Frame, text="Annuler",
-                            command=lambda: ferme_fen(TopLevel1))
-        Lab_quit.pack(side="top")
-        Frame.pack(side="bottom")
-        BoutonN.pack(side="left")
-        BoutonY.pack(side="left")
-        TopLevel1.grab_set()
+        Choix = tk_msgbox.askyesno("Quitter", "Voulez-vous vraiment quitter ?"
+                                   icon=msg.QUESTION, parent=root)
+        if Choix:
+            root.destroy()
     else:
-        ferme_fen(Root)
+        root.destroy()
 
 
 def ouvrir_aide():
