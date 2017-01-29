@@ -35,7 +35,7 @@ def clean_canv(Canv):
 
 
 def libere_sauv(MenuBar):
-    """focntion qui degrisse le bouton sauver"""
+    """fonction qui degrisse le bouton sauver"""
     MenuBar.menu.entryconfig("Sauver", state="normal")
 
 
@@ -46,7 +46,7 @@ def ferme_fen(fen):
 
 def bouge_droite(event, points):
     """ bouge la courbe si on a click sur la courbe"""
-    if len(points) == 0:  # debug un peu mais fait pas le cafe
+    if len(points) == 0 and xint.get() != 0:  # debug un peu mais fait pas le cafe
         Canv = event.widget
         ligne = Canv.find_withtag("current")[0]
         x1 = Canv.coords(ligne)[xint.get()]
@@ -62,7 +62,7 @@ def click(event):
     points = canv.coords(ligne)
     for i in range(0, len(points), 2):
         if points[i]-4 <= event.x <= points[i]+4:
-            if points[i+1]-4 <=event.y <= points[i+1]+4:
+            if points[i+1]-4 <= event.y <= points[i+1]+4:
                 xint.set(i)
                 print(i)
                 break
@@ -94,6 +94,8 @@ def ctrl_click(event, points, MenuBar):
 def release_key(event, points):
     """reset le tableau des coordonnée
     car le tracé c'est terminé"""
+    if event.keysym == "Control_L" or event.keysym == "Control_R":
+        xint.set(0)
     while len(points) > 0:
         points.remove(points[0])
 
@@ -211,12 +213,15 @@ def Canv_call(Canv, MenuBar):
     Canv.bind("<Control-B1-Motion>",
               lambda event: ctrl_click(event, points, MenuBar))
     Canv.bind("<ButtonRelease-1>", lambda event: release_key(event, points))
-    Canv.bind_all("<KeyRelease-Control_L>", lambda event: release_key(event, points), add="+")
-    Canv.bind_all("<KeyRelease-Control_R>", lambda event: release_key(event, points), add="+")
+    Canv.bind_all("<KeyRelease-Control_L>",
+                  lambda event: release_key(event, points), add="+")
+    Canv.bind_all("<KeyRelease-Control_R>",
+                  lambda event: release_key(event, points), add="+")
 
 
 if __name__ == "__main__":
-    (Root, Canv, Label, MenuBar, Vstr, xint, BoutonAide, Frame) = initialisation_tk()
+    (Root, Canv, Label, MenuBar,
+     Vstr, xint, BoutonAide, Frame) = initialisation_tk()
 
     configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame)
     placement_tk(Label, Canv, BoutonAide, Frame)

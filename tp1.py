@@ -31,7 +31,7 @@ def couleur_desurligne(event):
     Canv.itemconfig(Rect, width=1)
 
 
-def click_ok(Lab, Var, TopLevel):
+def click_ok(Lab, TopLevel):
     """ callback sur le click du bouton ok
     permettant de sauvegarder la derniere couleur cliqué
     et de close la fenetre"""
@@ -265,7 +265,7 @@ def config_widget(Scroll, Canv, Boutton, Lab, TopLevel1, Var):
     Tl_width = TopLevel1.winfo_width()
     Tl_height = TopLevel1.winfo_height()
     size = [Tl_width, Tl_height]
-    Boutton["Ok"].config(command=lambda: click_ok(Lab, Var, TopLevel1))
+    Boutton["Ok"].config(command=lambda: click_ok(Lab, TopLevel1))
     Boutton["Annuler"].config(command=lambda: click_annuler(TopLevel1))
     Canv.bind("<Button-4>", mouse_wheel)
     Canv.bind("<Button-5>", mouse_wheel)
