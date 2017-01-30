@@ -57,8 +57,8 @@ def click(event):
     ligne = Canv.find_withtag("current")[0]
     points = canv.coords(ligne)
     for i in range(0, len(points), 2):
-        if points[i]-4 <= event.x <= points[i]+4:
-            if points[i+1]-4 <= event.y <= points[i+1]+4:
+        if points[i]-10 <= event.x <= points[i]+10:
+            if points[i+1]-10 <= event.y <= points[i+1]+10:
                 xint.set(i)
                 print(i)
                 break
@@ -102,7 +102,7 @@ def menu_nouveau(Canv, MenuBar):
     MenuBar.menu.entryconfig("Sauver", state=tk.DISABLED)
 
 
-def menu_ouvrir(Canv, MenuBar):
+def menu_ouvrir(Canv, MenuBar,points):
     """Fonction associée au boutton ouvrir du menu"""
     nomFichier = tk_filedialog.askopenfilename(defaultextension=".jcl",
                                                filetypes=[("JCL", "*.jcl")],
@@ -117,6 +117,9 @@ def menu_ouvrir(Canv, MenuBar):
             droite = Canv.create_line(*coords)
             Canv.tag_bind(droite, "<Enter>", couleur_surligne)
             Canv.tag_bind(droite, "<Leave>", couleur_desurligne)
+            Canv.tag_bind(droite, "<Button-1>", click)
+            Canv.tag_bind(droite, "<B1-Motion>",
+                          lambda event: bouge_droite(event, points))
             libere_sauv(MenuBar)
         Fichier.close()
 
@@ -140,16 +143,17 @@ def menu_sauver(Canv):
 def menu_quitter(Root, canv):
     """Fonction associée au boutton quitter du menu"""
     if len(Canv.find_all()) > 0:
-        Choix = tk_msgbox.askyesno("Quitter", "Voulez-vous vraiment quitter ?"
-                                   icon=msg.QUESTION, parent=root)
+        Choix = tk_msgbox.askyesno("Quitter", "Voulez-vous vraiment quitter ?",
+                                   icon=tk_msgbox.QUESTION, parent=Root)
         if Choix:
-            root.destroy()
+            Root.destroy()
     else:
-        root.destroy()
+        Root.destroy()
 
 
 def ouvrir_aide():
     """ouvre l'aide apres appuie sur le bouton aide"""
+
     pass
 
 
@@ -168,7 +172,7 @@ def initialisation_tk():
     return(Root, Canv, Label, MenuBar, Vstr, xint, BoutonAide, Frame)
 
 
-def configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame):
+def configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame, points):
     """modifie les widgets"""
     Root.geometry('800x500')
     Frame.config(borderwidth=1, relief=tk.RAISED)
@@ -180,7 +184,7 @@ def configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame):
     MenuBar.menu.add_command(label="Nouveau",
                              command=lambda: menu_nouveau(Canv, MenuBar))
     MenuBar.menu.add_command(label="Ouvrir",
-                             command=lambda: menu_ouvrir(Canv, MenuBar))
+                             command=lambda: menu_ouvrir(Canv, MenuBar, points))
     MenuBar.menu.add_command(label="Sauver", state=tk.DISABLED,
                              command=lambda: menu_sauver(Canv))
     MenuBar.menu.add_command(label="Quitter",
@@ -196,9 +200,8 @@ def placement_tk(Label, Canv, BoutonAide, Frame):
     Canv.pack(fill=tk.BOTH)
 
 
-def Canv_call(Canv, MenuBar):
+def Canv_call(Canv, MenuBar, points):
     """associe tous les callbacks au canvas de base"""
-    points = []
     Canv.bind("<Control-B1-Motion>",
               lambda event: ctrl_click(event, points, MenuBar))
     Canv.bind("<ButtonRelease-1>", lambda event: release_key(event, points))
@@ -209,10 +212,11 @@ def Canv_call(Canv, MenuBar):
 
 
 if __name__ == "__main__":
+    points = []
     (Root, Canv, Label, MenuBar,
      Vstr, xint, BoutonAide, Frame) = initialisation_tk()
 
-    configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame)
+    configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame, points )
     placement_tk(Label, Canv, BoutonAide, Frame)
-    Canv_call(Canv, MenuBar)
+    Canv_call(Canv, MenuBar, points)
     Root.mainloop()
