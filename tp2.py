@@ -102,7 +102,7 @@ def menu_nouveau(Canv, MenuBar):
     MenuBar.menu.entryconfig("Sauver", state=tk.DISABLED)
 
 
-def menu_ouvrir(Canv, MenuBar,points):
+def menu_ouvrir(Canv, MenuBar, points):
     """Fonction associée au boutton ouvrir du menu"""
     nomFichier = tk_filedialog.askopenfilename(defaultextension=".jcl",
                                                filetypes=[("JCL", "*.jcl")],
@@ -184,7 +184,8 @@ def configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame, points):
     MenuBar.menu.add_command(label="Nouveau",
                              command=lambda: menu_nouveau(Canv, MenuBar))
     MenuBar.menu.add_command(label="Ouvrir",
-                             command=lambda: menu_ouvrir(Canv, MenuBar, points))
+                             command=lambda: menu_ouvrir(Canv,
+                                                         MenuBar, points))
     MenuBar.menu.add_command(label="Sauver", state=tk.DISABLED,
                              command=lambda: menu_sauver(Canv))
     MenuBar.menu.add_command(label="Quitter",
@@ -216,7 +217,7 @@ if __name__ == "__main__":
     (Root, Canv, Label, MenuBar,
      Vstr, xint, BoutonAide, Frame) = initialisation_tk()
 
-    configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame, points )
+    configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame, points)
     placement_tk(Label, Canv, BoutonAide, Frame)
     Canv_call(Canv, MenuBar, points)
     Root.mainloop()

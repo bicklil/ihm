@@ -1,0 +1,197 @@
+create schema danse;
+show search_path;
+SET search_path TO danse, public;
+CREATE DOMAIN type_danse AS VARCHAR(20) CHECK (VALUE IN ('salsa', 'rock', 'tango'));
+DROP DOMAIN type_danse;
+CREATE DOMAIN sexe AS VARCHAR(2) CHECK (VALUE IN ('M','F'));
+CREATE TABLE cours
+(
+  id_cours INTEGER NOT NULL PRIMARY KEY,
+  type_danse VARCHAR(10) NOT NULL
+);
+CREATE TABLE intervenant
+(
+  id_intervenant INTEGER NOT NULL PRIMARY KEY,
+  nom VARCHAR(10) NOT NULL
+);
+CREATE TABLE participant
+(
+  id_participant INTEGER NOT NULL PRIMARY KEY,
+  nom VARCHAR(10) NOT NULL,
+  age INTEGER NOT NULL CHECK (age BETWEEN 10 AND 100),
+  sexe sexe NOT NULL
+);
+CREATE TABLE atelier
+(
+  id_cours INTEGER NOT NULL REFERENCES cours,
+  id_intervenant INTEGER NOT NULL REFERENCES intervenant,
+  CONSTRAINT atelier_pk
+    PRIMARY KEY (id_cours,id_intervenant)
+);
+CREATE TABLE inscription
+(
+  id_cours INTEGER NOT NULL REFERENCES cours,
+  id_participant INTEGER NOT NULL REFERENCES participant,
+  CONSTRAINT inscription_pk
+    PRIMARY KEY (id_cours,id_participant)
+);
+
+SELECT *
+  FROM cours;
+
+INSERT INTO cours
+  VALUES (1,'salsa'),
+  (2,'salsa'),
+  (3,'rock'),
+  (4,'rock'),
+  (5,'rock'),
+  (6,'tango'),
+  (7,'tango');
+
+INSERT INTO intervenant
+  VALUES (1,'rey'),
+  (2,'gilles'),
+  (3,'denis'),
+  (4,'amandine');
+
+INSERT INTO participant
+  VALUES (1,'roger',30,'M'),
+  (2,'melanie',33,'F'),
+  (3,'suzanne',39,'F'),
+  (4,'henri',28,'M');
+
+INSERT INTO inscription
+  VALUES (1,1),
+  (2,2),
+  (2,1),
+  (1,4),
+  (3,4),
+  (4,3),
+  (4,2),
+  (4,1),
+  (5,4),
+  (6,4),
+  (7,3),
+  (6,2),
+  (6,1),
+  (7,4),
+  (6,3);
+
+  INSERT into atelier
+    VALUES (1,1),
+    (1,2),
+    (2,1),
+    (3,4),
+    (4,4),
+    (4,3),
+    (5,2),
+    (6,1),
+    (7,4),
+    (7,3);
+
+  INSERT INTO cours
+    VALUES (5,"valse");
+//erreur de cle existe deja//
+
+INSERT INTO atelier
+  VALUES (1,5);
+//erreur de cle qui n''existe pas deja//
+
+DELETE FROM cours
+  WHERE id_cours = 1;
+//erreur clé referencé dehors//
+
+
+id_cours INTEGER NOT NULL REFERENCES cours on DELETE cascade,
+
+INSERT into cours
+  VALUES (8,'slow'),
+  (9,'chahcahcah');
+
+INSERT into intervenant
+  VALUES (5,'quentin');
+
+INSERT into atelier
+VALUES (9,5);
+
+
+
+--------------------------------------------------------------------------------
+
+CREATE schema bdd_location;
+SET search_path TO bdd_location, public;
+
+CREATE DOMAIN type_emplacement AS VARCHAR(20) CHECK (VALUE IN ('tente', 'caravane', 'camping-car', 'bungalow'));
+CREATE DOMAIN type_duree AS VARCHAR(10) CHECK (VALUE IN ('heure','journée','semaine'));
+
+CREATE TABLE emplacement
+(
+  nume INTEGER PRIMARY KEY,
+  surface INTEGER DEFAULT 6,
+  nbrePersMax INTEGER ,
+  typeempl type_emplacement
+);
+
+CREATE TABLE sejour
+(
+  Num INTEGER PRIMARY KEY,
+  Nomclient VARCHAR(20) NOT NULL,
+  debsejour date NOT NULL,
+  finsejour date NOT NULL,
+  nbPers INTEGER NOT NULL CHECK (nbPers > 0),
+  nume INTEGER NOT NULL REFERENCES emplacement on DELETE cascade,
+  CONSTRAINT dates
+    CHECK (debsejour<finsejour)
+);
+
+CREATE TABLE sport
+(
+  noms VARCHAR(20) PRIMARY KEY,
+  unitloc real NOT NULL,
+  duree type_duree NOT NULL,
+  tarifunite real NOT NULL
+);
+
+CREATE TABLE location
+(
+  num INTEGER NOT NULL REFERENCES sejour on DELETE cascade,
+  noms VARCHAR(20) NOT NULL REFERENCES sport on DELETE cascade,
+  nbrunite INTEGER DEFAULT 1 CHECK (nbrunite BETWEEN 1 AND 3),
+  PRIMARY KEY (num,noms)
+);
+
+INSERT into emplacement
+  VALUES (1,12,4,'tente'),
+  (2,12,4,'tente'),
+  (3,15,6,'tente'),
+  (4,20,8,'tente'),
+  (15,14,4,'caravane'),
+  (16,16,6,'caravane'),
+  (17,19,6,'caravane'),
+  (33,16,4,'caravane'),
+  (34,16,4,'camping-car'),
+  (58,30,4,'camping-car'),
+  (59,36,4,'bungalow'),
+  (60,50,5,'bungalow'),
+  (61,60,6,'bungalow');
+
+INSERT into sport
+  VALUES ('tennis',1,'heure',6),
+('vtt',0.5,'journée',7.5),
+('planche-voile',1,'journée',11.5),
+('canoe',2,'heure',3.75),
+('petanque',2,'heure',2);
+
+INSERT into sejour
+   VALUES (1,'merle','2003-07-01','2003-07-15',3,4),
+   (2,'poussin','2003-07-01','2003-07-10',4,2),
+   (3,'rossignol','2003-07-01','2003-07-10',5,17),
+   (4,'canaris','2003-07-02','2003-07-09',2,34),
+   (5,'piaf','2003-07-02','2003-07-21',2,1),
+   (6,'rose','2003-07-05','2003-07-20',6,60);
+
+INSERT into location
+  VALUES (3,'tennis',1),
+  (5,'canoe',2),
+  (5,'tennis',1),
+  (3,'vtt',2);
