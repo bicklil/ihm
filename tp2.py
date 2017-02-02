@@ -57,8 +57,8 @@ def click(event):
     ligne = Canv.find_withtag("current")[0]
     points = canv.coords(ligne)
     for i in range(0, len(points), 2):
-        if points[i]-10 <= event.x <= points[i]+10:
-            if points[i+1]-10 <= event.y <= points[i+1]+10:
+        if points[i]-13 <= event.x <= points[i]+13:
+            if points[i+1]-13 <= event.y <= points[i+1]+13:
                 xint.set(i)
                 print(i)
                 break
@@ -151,10 +151,18 @@ def menu_quitter(Root, canv):
         Root.destroy()
 
 
-def ouvrir_aide():
+def ouvrir_aide(Root):
     """ouvre l'aide apres appuie sur le bouton aide"""
+    Fenaide = tk.Toplevel(Root)
+    Fenaide.resizable(width=tk.FALSE, height=tk.FALSE)
+    text = tk.Text(Fenaide, height=30, width=50)
+    text.config(cursor="arrow")
+    fichier = open("aide.txt", "r")
+    for ligne in fichier:
+        text.insert(tk.END, ligne)
 
-    pass
+    text["state"] = tk.DISABLED
+    text.pack()
 
 
 def initialisation_tk():
@@ -175,9 +183,12 @@ def initialisation_tk():
 def configuration_tk(Root, MenuBar, BoutonAide, Canv, Frame, points):
     """modifie les widgets"""
     Root.geometry('800x500')
+    Root.resizable(width=tk.FALSE, height=tk.FALSE)
+
     Frame.config(borderwidth=1, relief=tk.RAISED)
-    Canv.config(bg="white")
-    BoutonAide.config(text="Aide", borderwidth=0, command=ouvrir_aide)
+    Canv.config(bg="white", height=500, width=800)
+    BoutonAide.config(text="Aide",
+                      borderwidth=0, command=lambda: ouvrir_aide(Root))
     MenuBar.menu = tk.Menu(MenuBar, tearoff=0)
     MenuBar["menu"] = MenuBar.menu
     MenuBar["anchor"] = "w"

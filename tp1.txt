@@ -119,7 +119,7 @@ VALUES (9,5);
 --------------------------------------------------------------------------------
 
 CREATE schema bdd_location;
-SET search_path TO bdd_location, public;
+SET search_path TO bdd_location, danse;
 
 CREATE DOMAIN type_emplacement AS VARCHAR(20) CHECK (VALUE IN ('tente', 'caravane', 'camping-car', 'bungalow'));
 CREATE DOMAIN type_duree AS VARCHAR(10) CHECK (VALUE IN ('heure','journée','semaine'));
