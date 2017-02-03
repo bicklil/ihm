@@ -248,7 +248,7 @@ def placement_tk(Label, Canv, BoutonAide, Frame):
 
 
 def Canv_call(Canv, MenuBar, points):
-    """associe tous les callbacks au canvas de base"""
+    """associe des callbacks au canvas de base"""
     Canv.bind("<Control-B1-Motion>",
               lambda event: ctrl_click(event, points, MenuBar))
     Canv.bind("<ButtonRelease-1>", lambda event: release_key(event, points))
