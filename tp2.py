@@ -4,7 +4,7 @@ import tkinter.messagebox as tk_msgbox
 
 
 def couleur_surligne(event):
-    """ callback modifier le trait
+    """ callback modifiant le trait
     au survol de la souris """
     Canv = event.widget
     droite = Canv.find_withtag("current")[0]
@@ -14,7 +14,8 @@ def couleur_surligne(event):
 
 
 def couleur_desurligne(event):
-    """ callback remetant a l'etat initial si
+    """ callback remmetant a l'etat initial
+    la couleur de la droite si
     la souris s'ecarte du trait"""
     Canv = event.widget
     droite = Canv.find_withtag("current")[0]
@@ -24,7 +25,7 @@ def couleur_desurligne(event):
 
 
 def update_label(event):
-    """modifie le label au click sur le trait"""
+    """modifie le label au survol du trait"""
     Canv = event.widget
     droite = Canv.find_withtag("current")[0]
 
@@ -36,12 +37,13 @@ def clean_canv(Canv):
 
 
 def libere_sauv(MenuBar):
-    """fonction qui degrisse le bouton sauver"""
+    """fonction qui degrise le bouton sauver"""
     MenuBar.menu.entryconfig("Sauver", state="normal")
 
 
 def bouge_droite(event, points):
-    """ bouge la courbe si on a click sur la courbe"""
+    """ bouge la courbe si on a bougé la souris avec
+    le click gauche enclenché sur la courbe"""
     if len(points) == 0 and xint.get() != 0:
         Canv = event.widget
         ligne = Canv.find_withtag("current")[0]
@@ -53,6 +55,8 @@ def bouge_droite(event, points):
 
 
 def click(event):
+    """recupere l'indice dans les coordonnées
+    de la droite clicke et la stock dans un intvar()"""
     canv = event.widget
     ligne = Canv.find_withtag("current")[0]
     points = canv.coords(ligne)
@@ -151,16 +155,45 @@ def menu_quitter(Root, canv):
         Root.destroy()
 
 
+def bouge_text(event, tagarr, tagdep):
+    """ il faut tag de depart et tag d'arrive
+    on compare pour savoir si on fait +20 ou -20
+    """
+    text = event.widget
+    posdep = text.index(tagdep)
+    posarr = text.index(tagarr)
+    if text.compare(posdep, ">", posarr):
+        posf = str(float(posarr)-20)
+        text.mark_set("tempo", posf)
+        print(posf)
+    else:
+        posf = str(float(posarr)+20)
+        text.mark_set("tempo", posf)
+        print(posf)
+
+    text.see("tempo")
+    text.mark_unset("tempo")
+
+
 def ouvrir_aide(Root):
     """ouvre l'aide apres appuie sur le bouton aide"""
     Fenaide = tk.Toplevel(Root)
     Fenaide.resizable(width=tk.FALSE, height=tk.FALSE)
-    text = tk.Text(Fenaide, height=30, width=50)
+    text = tk.Text(Fenaide, height=20, width=50)
     text.config(cursor="arrow")
     fichier = open("aide.txt", "r")
     for ligne in fichier:
         text.insert(tk.END, ligne)
 
+    text.tag_config("lien", foreground="blue", underline=1)
+    text.mark_set("debut", 1.0)
+    text.mark_set("chap1", 24.0)
+    text.tag_add("chap1", 2.2, 2.9)
+    text.tag_add("lien", 2.2, 2.9)
+    text.tag_add("debut", 24.0, 24.4)
+    text.tag_add("lien", 24.0, 24.4)
+    text.tag_bind("debut", "<ButtonRelease-1>", lambda event: bouge_text(event, "debut", "chap1"), add="+")
+    text.tag_bind("chap1", "<ButtonRelease-1>", lambda event: bouge_text(event, "chap1", "debut"), add="+")
     text["state"] = tk.DISABLED
     text.pack()
 

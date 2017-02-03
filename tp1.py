@@ -66,6 +66,8 @@ def ouvrir_fichier(file):
 
 
 def resize_fen(event, NbLigne, NbLigne_affiche, NbColonne, ecart, Canv):
+    """ fonction qui permet de redimensionner dynamiquement
+    les petis rectangles de couleur """
     TopLevel1 = event.widget
     largeur = event.width
     hauteur = event.height
