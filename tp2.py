@@ -56,7 +56,7 @@ def bouge_droite(event, points):
 
 def click(event):
     """recupere l'indice dans les coordonnées
-    de la droite clicke et la stock dans un intvar()"""
+    de la droite cliqué et la stock dans un intvar()"""
     canv = event.widget
     ligne = Canv.find_withtag("current")[0]
     points = canv.coords(ligne)
@@ -192,8 +192,10 @@ def ouvrir_aide(Root):
     text.tag_add("lien", 2.2, 2.9)
     text.tag_add("debut", 24.0, 24.4)
     text.tag_add("lien", 24.0, 24.4)
-    text.tag_bind("debut", "<ButtonRelease-1>", lambda event: bouge_text(event, "debut", "chap1"), add="+")
-    text.tag_bind("chap1", "<ButtonRelease-1>", lambda event: bouge_text(event, "chap1", "debut"), add="+")
+    text.tag_bind("debut", "<ButtonRelease-1>",
+                  lambda event: bouge_text(event, "debut", "chap1"), add="+")
+    text.tag_bind("chap1", "<ButtonRelease-1>",
+                  lambda event: bouge_text(event, "chap1", "debut"), add="+")
     text["state"] = tk.DISABLED
     text.pack()
 
