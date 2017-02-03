@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.filedialog as tk_filedialog
 import tkinter.messagebox as tk_msgbox
 
-
+"""modifie l'aide curseur"""
 def couleur_surligne(event):
     """ callback modifiant le trait
     au survol de la souris """
