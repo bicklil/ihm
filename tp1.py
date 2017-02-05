@@ -2,53 +2,7 @@ import tkinter as tk
 import getopt
 import sys
 
-
-def mouse_wheel(event):
-    """ callback permettant de modifier
-    la position en y du canvas a l'aide de la molette"""
-    if event.num == 5:
-        pas = 1
-    if event.num == 4:
-        pas = -1
-    event.widget.yview_scroll(pas, tk.UNITS)
-
-
-def couleur_surligne(event):
-    """ callback modifier le contour
-    d'un rectangle au survol de la souris """
-    Canv = event.widget
-    Rect = Canv.find_withtag("current")[0]
-    Canv.itemconfig(Rect, outline="red")
-    Canv.itemconfig(Rect, width=1.5)
-
-
-def couleur_desurligne(event):
-    """ callback remetant a l'etat initial si
-    la souris sort d'un rectangle"""
-    Canv = event.widget
-    Rect = Canv.find_withtag("current")[0]
-    Canv.itemconfig(Rect, outline="black")
-    Canv.itemconfig(Rect, width=1)
-
-
-def click_ok(Lab, TopLevel):
-    """ callback sur le click du bouton ok
-    permettant de sauvegarder la derniere couleur cliqué
-    et de close la fenetre"""
-    Var.set(Lab["text"])
-    print(Var.get())
-    TopLevel.destroy()
-
-
-def click_annuler(TopLevel):
-    """ callback du clique annuler qui ferme la fenetre"""
-    TopLevel.destroy()
-
-
-def clic_couleur(Color,  Lab):
-    """ callback apres avoir click sur une couleur
-    qui implique une mise a jour du texte"""
-    Lab["text"] = Color
+# fonction interne
 
 
 def ouvrir_fichier(file):
@@ -63,38 +17,6 @@ def ouvrir_fichier(file):
         print("filename: ", e.filename)
         print("strerror: ", e.strerror)
         exit()
-
-
-def resize_fen(event, NbLigne, NbLigne_affiche, NbColonne, ecart, Canv):
-    """ fonction qui permet de redimensionner dynamiquement
-    les petits rectangles de couleur """
-    TopLevel1 = event.widget
-    largeur = event.width
-    hauteur = event.height
-    if hauteur > 50:
-        TopLevel1.unbind("<Configure>")
-        Canv["height"] = hauteur - 50
-        Canv["width"] = largeur
-        larg_rect = (largeur-16-(ecart*(NbColonne+1)))/NbColonne
-        haut_rect = (hauteur-50-(ecart*(NbLigne_affiche+1)))/NbLigne_affiche
-        Canv["scrollregion"] = (0, 0, 0, Ecart+NbLigne * (haut_rect+Ecart))
-        indice_ligne = -1
-        i = 0
-        for rect in Canv.find_all():
-            if i == 0:
-                indice_ligne += 1
-            x1 = i*larg_rect + Ecart + i*Ecart
-            y1 = Ecart+haut_rect*indice_ligne + Ecart * indice_ligne
-            x2 = (i+1)*larg_rect + (i+1)*Ecart
-            y2 = haut_rect*(indice_ligne+1) + Ecart * (indice_ligne+1)
-            Canv.coords(rect, x1, y1, x2, y2)
-            i += 1
-            i = i % NbColonne
-        TopLevel1.update()
-        TopLevel1.bind("<Configure>",
-                       lambda event: resize_fen(event, NbLigne,
-                                                NbLigne_affiche,
-                                                NbColonne, Ecart, Canv))
 
 
 def parser_rgb(file_open):
@@ -312,6 +234,88 @@ def creation_carre(DicoColor, CoteCarre, Ecart, Lab,
                                                            NbLigne_a_afficher,
                                                            NbColonne, Ecart,
                                                            Canv))
+
+# fonction callback
+
+
+def mouse_wheel(event):
+    """ callback permettant de modifier
+    la position en y du canvas a l'aide de la molette"""
+    if event.num == 5:
+        pas = 1
+    if event.num == 4:
+        pas = -1
+    event.widget.yview_scroll(pas, tk.UNITS)
+
+
+def couleur_surligne(event):
+    """ callback modifier le contour
+    d'un rectangle au survol de la souris """
+    Canv = event.widget
+    Rect = Canv.find_withtag("current")[0]
+    Canv.itemconfig(Rect, outline="red")
+    Canv.itemconfig(Rect, width=1.5)
+
+
+def couleur_desurligne(event):
+    """ callback remetant a l'etat initial si
+    la souris sort d'un rectangle"""
+    Canv = event.widget
+    Rect = Canv.find_withtag("current")[0]
+    Canv.itemconfig(Rect, outline="black")
+    Canv.itemconfig(Rect, width=1)
+
+
+def click_ok(Lab, TopLevel):
+    """ callback sur le click du bouton ok
+    permettant de sauvegarder la derniere couleur cliqué
+    et de close la fenetre"""
+    Var.set(Lab["text"])
+    print(Var.get())
+    TopLevel.destroy()
+
+
+def click_annuler(TopLevel):
+    """ callback du clique annuler qui ferme la fenetre"""
+    TopLevel.destroy()
+
+
+def clic_couleur(Color,  Lab):
+    """ callback apres avoir click sur une couleur
+    qui implique une mise a jour du texte"""
+    Lab["text"] = Color
+
+
+def resize_fen(event, NbLigne, NbLigne_affiche, NbColonne, ecart, Canv):
+    """ fonction qui permet de redimensionner dynamiquement
+    les petits rectangles de couleur """
+    TopLevel1 = event.widget
+    largeur = event.width
+    hauteur = event.height
+    if hauteur > 50:
+        TopLevel1.unbind("<Configure>")
+        Canv["height"] = hauteur - 50
+        Canv["width"] = largeur
+        larg_rect = (largeur-16-(ecart*(NbColonne+1)))/NbColonne
+        haut_rect = (hauteur-50-(ecart*(NbLigne_affiche+1)))/NbLigne_affiche
+        Canv["scrollregion"] = (0, 0, 0, Ecart+NbLigne * (haut_rect+Ecart))
+        indice_ligne = -1
+        i = 0
+        for rect in Canv.find_all():
+            if i == 0:
+                indice_ligne += 1
+            x1 = i*larg_rect + Ecart + i*Ecart
+            y1 = Ecart+haut_rect*indice_ligne + Ecart * indice_ligne
+            x2 = (i+1)*larg_rect + (i+1)*Ecart
+            y2 = haut_rect*(indice_ligne+1) + Ecart * (indice_ligne+1)
+            Canv.coords(rect, x1, y1, x2, y2)
+            i += 1
+            i = i % NbColonne
+        TopLevel1.update()
+        TopLevel1.bind("<Configure>",
+                       lambda event: resize_fen(event, NbLigne,
+                                                NbLigne_affiche,
+                                                NbColonne, Ecart, Canv))
 
 
 if __name__ == "__main__":

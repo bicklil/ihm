@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.filedialog as tk_filedialog
 import tkinter.messagebox as tk_msgbox
 
-"""modifie l'aide curseur"""
+
 def couleur_surligne(event):
     """ callback modifiant le trait
     au survol de la souris """
@@ -64,7 +64,6 @@ def click(event):
         if points[i]-13 <= event.x <= points[i]+13:
             if points[i+1]-13 <= event.y <= points[i+1]+13:
                 xint.set(i)
-                print(i)
                 break
 
 
@@ -165,14 +164,35 @@ def bouge_text(event, tagarr, tagdep):
     if text.compare(posdep, ">", posarr):
         posf = str(float(posarr)-20)
         text.mark_set("tempo", posf)
-        print(posf)
     else:
         posf = str(float(posarr)+20)
         text.mark_set("tempo", posf)
-        print(posf)
 
     text.see("tempo")
     text.mark_unset("tempo")
+
+
+def souris_change_hand_closed(event):
+    """change le curseur en main fermée
+    quand un click est effectué sur un lien"""
+    text = event.widget
+    text.config(cursor="hand1")
+
+
+def souris_change_hand(event):
+    """change le curseur en main ouverte
+    quand on survole un lien"""
+    text = event.widget
+    text.config(cursor="hand2")
+    text.bind("<Button-1>", souris_change_hand_closed)
+
+
+def souris_change_arrow(event):
+    """change le curseur en fleche
+    quand on sort d'un lien"""
+    text = event.widget
+    text.unbind("<Button-1>")
+    text.config(cursor="arrow")
 
 
 def ouvrir_aide(Root):
@@ -188,14 +208,16 @@ def ouvrir_aide(Root):
     text.tag_config("lien", foreground="blue", underline=1)
     text.mark_set("debut", 1.0)
     text.mark_set("chap1", 24.0)
-    text.tag_add("chap1", 2.2, 2.9)
+    text.tag_add("chap1", 2.3, 2.9)
     text.tag_add("lien", 2.2, 2.9)
-    text.tag_add("debut", 24.0, 24.4)
-    text.tag_add("lien", 24.0, 24.4)
+    text.tag_add("debut", 24.0, 24.19)
+    text.tag_add("lien", 24.0, 24.19)
     text.tag_bind("debut", "<ButtonRelease-1>",
-                  lambda event: bouge_text(event, "debut", "chap1"), add="+")
+                  lambda event: bouge_text(event, "debut", "chap1"))
     text.tag_bind("chap1", "<ButtonRelease-1>",
                   lambda event: bouge_text(event, "chap1", "debut"), add="+")
+    text.tag_bind("lien", "<Enter>", souris_change_hand)
+    text.tag_bind("lien", "<Leave>", souris_change_arrow)
     text["state"] = tk.DISABLED
     text.pack()
 
